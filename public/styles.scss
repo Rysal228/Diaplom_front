@@ -1,0 +1,46 @@
+/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.mat-dialog-override {
+    mat-dialog-container {
+      > :first-child {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      mat-dialog-content,
+      div[mat-dialog-content] {
+        flex-grow: 1;
+        max-height: unset;
+      }
+    }
+  }
+
+  .mat-field-inside-dialog-workaround .mat-mdc-dialog-title + .mat-mdc-dialog-content {
+    padding-top: 4.3px;
+  }
+  .mdc-tab__content{
+    pointer-events: all!important;
+  }
+  
+  .dense-2 {
+    @include mat.all-component-densities(-2);
+  }
+  .mat-tooltip  {
+    white-space: pre-line;
+  }
+
+  .custom-dialog-container .mat-dialog-container {
+    padding: 0px !important;
+  }
+
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

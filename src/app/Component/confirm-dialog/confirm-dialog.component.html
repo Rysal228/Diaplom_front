@@ -1,0 +1,23 @@
+<div class="logout-dialog-container">
+
+        <div [innerHTML]="confirmQuestion"> </div>
+
+    <div class="action-buttons">
+
+      <button class="refuse-button"
+      mat-raised-button
+      color="link"
+      cdkFocusInitial
+      (click)="dialogRef.close(false)">
+      Отмена
+      </button>
+      
+      <button class="confirm-button"
+              mat-raised-button
+              color="primary"
+              (click)="dialogRef.close(true)">
+        Да
+      </button>
+     
+    </div>
+  </div>

@@ -1,0 +1,29 @@
+//@import 'public/styles.scss';
+@import '../../styles/form-buttons.scss';
+
+.logout-dialog-container {
+  padding: 20px;
+  text-align: center;
+}
+
+.dialog-title {
+  margin-bottom: 20px;
+}
+
+.dialog-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+button {
+  background-color: #ffffff;
+  color: #000000 !important;
+  transition: background-color 0.3s ease;
+
+  &.confirm-button {
+    // background-color: mat-color($primary, default);
+    color: white !important;
+  }
+
+}

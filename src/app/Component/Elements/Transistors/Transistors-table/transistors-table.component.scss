@@ -1,0 +1,83 @@
+@use '@angular/material' as mat;
+@import "../../../../styles/elements-table.scss";
+ @import '../../../../styles/table.scss';
+
+.customer-table{
+    border-collapse: collapse;
+    border: 1.5px solid #417690;
+    @include elements-table;
+}
+
+.elements-table__container {
+    @include elements-table__container;
+    overflow: auto;
+    height: 670px;
+  }
+  
+::ng-deep .search-fields-object-table{
+    @include mat.form-field-density(-5);
+    @include mat.table-density(-3);
+    margin: 25px 50px 0;
+}
+
+.object-table-cell {
+  text-align: center;
+  width: 20% !important;
+  word-break: break-word;
+}
+.elements-table {
+    @include elements-table;
+  }
+.object-table-column-name{
+  border: 1px solid #417690;
+  text-align: center;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+    background-color: #cccccc;
+}
+
+.button-right{
+    text-align: right;
+    margin: 10px;   
+}
+
+.td-container-row {
+    display: flex; justify-content: space-between; align-items: center;
+    span {
+      flex-grow: 1; text-align: left; padding-left: 5px;
+    }
+  }
+
+  .button {
+    width: 400px;
+  }
+
+  .table-cell-color{
+    font-weight: bold;
+  }
+
+  .mat-column-region {
+    width: 20% !important;
+    word-break: break-word;
+  }
+
+  .mat-column-name {
+    width: 20% !important;
+    word-break: break-word;
+  }
+
+  .mat-column-inn {
+    width: 20% !important;
+    word-break: break-word;
+  }
+
+  .mat-column-holding {
+    width: 20% !important;
+    word-break: break-word;
+  }
+
+  .mat-column-comment {
+    width: 20% !important;
+    word-break: break-word;
+  }

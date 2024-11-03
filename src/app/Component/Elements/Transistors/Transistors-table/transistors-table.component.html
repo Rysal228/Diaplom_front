@@ -1,0 +1,134 @@
+<div class="elements__container">
+
+    <div class="elements-header">
+
+        <button class="button"
+                mat-fab
+                extended
+                color="primary"
+                (click)="openTransistorModal()">
+            Добавить транзистор
+
+            <mat-icon>
+                add
+            </mat-icon>
+        </button>
+    </div>
+
+    <div class="elements-table__container">
+
+        <table class="elements-table"
+                mat-table
+                [dataSource]="transistorList">
+
+            <ng-container matColumnDef="part_number">
+
+                <th mat-header-cell *matHeaderCellDef>
+
+                    <div class="th-container-grid">
+                        <div class="th-first-grid-row">
+                            <p class="th-text">Название Part number</p> 
+                        </div>
+
+                        <input class="grid-last input-field"
+                                matInput
+                                
+                                placeholder="Поиск по номеру."
+                                [matAutocomplete]="region_name_filter"
+                                matAutocompletePosition="above">
+                        <mat-autocomplete #region_name_filter="matAutocomplete">
+                            <mat-option value=""
+                                        class="reset-filter">Сбросить фильтр</mat-option>
+                        </mat-autocomplete>
+                    </div>
+                </th>
+
+                <td mat-cell *matCellDef="let element">
+                    <div class="td-container-row table-cell-color">
+                    <span (click)=" openTransistorModal(element)">
+                        {{element.part_number}}
+                    </span>
+                    <mat-icon queryParamsHandling="merge"
+                    [matTooltip]="'Кликните, чтобы удалить запись'"
+                    [matTooltipShowDelay]="100" 
+                    (click)=" openTransistorDeleteModal(element)"
+                   >delete</mat-icon>  
+                </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="library_ref">
+                <th mat-header-cell *matHeaderCellDef>
+
+                    <div class="th-container-grid">
+
+                        <div class="th-first-grid-row">
+                            <p class="th-text">Компонент</p>
+                        </div>
+                    </div>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  <span (click)="openTransistorModal(element)">{{element.library_ref}}</span>  
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="library_path">
+                <th mat-header-cell *matHeaderCellDef>
+
+                    <div class="th-container-grid">
+
+                        <div class="th-first-grid-row">
+                            <p class="th-text">Library Path</p>
+                        </div>
+                    </div>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                    <span (click)="openTransistorModal(element)">{{element.library_path}}</span>  
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="footprint_ref">
+                <th mat-header-cell *matHeaderCellDef>
+
+                    <div class="th-container-grid">
+
+                        <div class="th-first-grid-row">
+                            <p class="th-text">Footprint Ref</p>
+                        </div>
+                    </div>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                    <span (click)="openTransistorModal(element)"> {{element.footprint_ref}}</span> 
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="footprint_path">
+                <th mat-header-cell *matHeaderCellDef>
+
+                    <div class="th-container-grid">
+
+                        <div class="th-first-grid-row">
+                            <p class="th-text">Footprint Path</p>
+                        </div>
+                    </div>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                    <span (click)="openTransistorModal(element)">  {{element.footprint_path}}</span> 
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
+
+            <tr mat-row
+                
+                *matRowDef="let row; columns: columnsToDisplay">
+            </tr>
+        </table>
+    </div>
+    <!-- <app-paginator class="paginator"
+        [length]="length"
+        (paginatorChanged)="onPaginatorChanged($event)">
+    </app-paginator> -->
+    <mat-paginator [length]=len [pageSizeOptions]="[10, 50, 100]" aria-label="Select page">
+    </mat-paginator>
+</div>
