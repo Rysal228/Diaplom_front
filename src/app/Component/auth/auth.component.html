@@ -1,0 +1,26 @@
+<div class="row pt-5">
+    <form [formGroup]="authForm">
+    <div class="">
+        <div class="">
+            <div class="">
+                <h3>Авторизация</h3>
+            </div>
+            <div class="">
+                    <div class="">
+                        <mat-form-field appearance="outline" >
+                        <mat-label>Логин</mat-label> 
+                        <input matInput formControlName="login">
+                        </mat-form-field>
+                    </div>
+                    <div class="">
+                        <mat-form-field appearance="outline" >
+                        <mat-label>Пароль</mat-label> 
+                        <input matInput type="password" formControlName="password">
+                        </mat-form-field>
+                    </div>
+                    <button mat-raised-button type="submit" (click)="onLogin()">Войти</button>
+            </div>
+        </div>
+    </div>
+    </form>
+</div>

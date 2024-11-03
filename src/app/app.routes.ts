@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 export const routes: Routes = [
-    //{ path: "", redirectTo: 'resistors', pathMatch: 'full'},
+    { path: "", redirectTo: 'auth', pathMatch: 'full'},
+    { path : "auth", loadComponent: () => import ('./Component/auth/auth.component').then(c => c.AuthComponent)},
     { path: "elementsBar", loadComponent: () => import ('./Component/Elements/elements-table.component').then(c => c.ElementsTableComponent)},
     { path: "resistors", loadComponent: () => import ('./Component/Elements/Resistors/Resistors-table/resistors-table.component').then(c => c.ResistorsTableComponent)},
     { path: "transistors", loadComponent: () => import ('./Component/Elements/Transistors/Transistors-table/transistors-table.component').then(c => c.TransistorsTableComponent)},
