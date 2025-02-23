@@ -7,6 +7,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { JwtInterceptorProviders } from '../src/app/Component/interceptor/custom.interceptor';
 
 bootstrapApplication(AppComponent, {
     providers: [
@@ -23,6 +24,7 @@ bootstrapApplication(AppComponent, {
             provide: MAT_DIALOG_DEFAULT_OPTIONS,
             useValue: { panelClass: 'mat-dialog-override' }
         },
+        JwtInterceptorProviders,
         provideAnimations(),
         provideHttpClient(withInterceptorsFromDi()), provideAnimationsAsync()
     ]

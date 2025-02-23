@@ -1,6 +1,6 @@
 <div class="logout-dialog-container">
 
-        <div [innerHTML]="confirmQuestion"> </div>
+        <div [innerHTML]="confirmQuestion" class="dialog-title"> </div>
 
     <div class="action-buttons">
 
@@ -14,7 +14,6 @@
       
       <button class="confirm-button"
               mat-raised-button
-              color="primary"
               (click)="dialogRef.close(true)">
         Да
       </button>

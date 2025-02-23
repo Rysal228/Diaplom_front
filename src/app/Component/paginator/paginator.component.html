@@ -1,0 +1,9 @@
+<mat-paginator (page)="onPaginatorEvent($event)"
+               [length]="length"
+               [pageSize]="paginator.limit"
+               [pageIndex]="getPageIndex()"
+               [pageSizeOptions]="pageSizeOptions"
+               [showFirstLastButtons]="true"
+               aria-label="Выберите страницу"
+               style="background: #464545 !important;">
+</mat-paginator>

@@ -1,0 +1,22 @@
+::ng-deep .mat-mdc-paginator {
+    color: white !important;
+}
+
+::ng-deep .mat-mdc-paginator .mat-mdc-paginator-range-label {
+    color: white !important;
+}
+
+::ng-deep .mat-mdc-paginator-navigation-next svg,
+::ng-deep .mat-mdc-paginator-navigation-previous svg,
+::ng-deep .mat-mdc-paginator-navigation-first svg,
+::ng-deep .mat-mdc-paginator-navigation-last svg {
+    fill: white !important;
+}
+
+::ng-deep .mat-mdc-paginator-page-size-select {
+    color: white !important;
+}
+
+::ng-deep .mat-mdc-select-value {
+    color: white !important;
+}

@@ -1,9 +1,12 @@
 <header class="header">
+    <h3> Менеджер Altium Designer</h3>
+    <div *ngIf ="storageService.onLogin()" class="login">
     <div class="action-button">
         <button mat-raised-button (click)="this.componentPage()">Справочник</button>
         <button mat-raised-button (click)="this.countPage()">Закуп</button>
     </div>
             <div class="action-icon">
-                <mat-icon matTooltip="Выйти из аккаунта" (click)="this.logout()">exit_to_app</mat-icon>
+                <mat-icon matTooltip="Выйти из аккаунта" (click)="this.authService.logout()">exit_to_app</mat-icon>
             </div>
+    </div>
 </header>

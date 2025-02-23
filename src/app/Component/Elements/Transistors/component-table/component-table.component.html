@@ -1,0 +1,90 @@
+<div class="nav-list-container">
+    <div class="nav-list-container">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label class="color-white">Таблица компонента</mat-label>
+            <input matInput type="text" class="color-white" [formControl]="tableListFilter" [matAutocomplete]="table_list_filter" placeholder="Введите название таблицы"/>
+            <mat-autocomplete #table_list_filter="matAutocomplete" >
+                <mat-option (click)="clearTableListFilter()"> <p> Сбросить фильтр</p></mat-option>
+                    <mat-option (onSelectionChange)="onTableSelected(table)" *ngFor="let table of tableList" [value]="table.name">
+                        {{table.name}}
+                    </mat-option>
+            </mat-autocomplete> 
+        </mat-form-field>
+
+        <button class="button" mat-fab  extended
+        (click)="openComponentModal()">
+          Добавить 
+        <mat-icon>
+            add
+        </mat-icon>
+      </button>
+    </div>
+</div>
+
+  <div style="justify-content:flex-end">
+  <h2>Сортировка по столбцу:</h2>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label class="color-white">Столбец</mat-label>
+    <input matInput type="text" [formControl]="columnListFilter" [matAutocomplete]="column_list_filter" class="color-white" placeholder="Введите название столбца"/>
+    <mat-autocomplete #column_list_filter="matAutocomplete">
+        <mat-option (click)="clearColumnListFilter()"> <p> Сбросить фильтр</p></mat-option>
+            <mat-option (onSelectionChange)="onColumnSelected(column)" *ngFor="let column of displayedColumns" [value]="column">
+                {{column}}
+            </mat-option>
+    </mat-autocomplete>
+    
+</mat-form-field>
+<h2>Сортировка по:</h2>
+<div [formGroup]="componentsFilter">
+    <mat-form-field appearance="outline">
+        <mat-select formControlName="property_sort" style="color: white">
+            <mat-option *ngFor="let sort of sortingValue" [value]="sort.value" >
+                {{ sort.name }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+  </div>
+  <article>
+    <div class="table-container">
+    <table mat-table [dataSource]="componentList">
+      <ng-container *ngFor="let column of displayedColumns">
+        <ng-container matColumnDef="{{ column }}">
+          <th mat-header-cell *matHeaderCellDef>
+            {{ column }}
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <input
+                class="grid-last input-field"
+                matInput
+                placeholder="Введите значение"
+                [formControl]="getColumnFilterControl(column)"
+                matAutocompletePosition="above"
+              />
+            </mat-form-field>
+          </th>
+          <td mat-cell *matCellDef="let element" (click)="openComponentModal(element)">
+            <div class="cell-content">
+              <span>{{ element[column] }}</span>
+              <ng-container *ngIf="column === 'Part Number'">
+                <mat-icon 
+                  matTooltip="Кликните, чтобы удалить запись"
+                  matTooltipShowDelay="100" 
+                  (click)="openComponentDeleteModal(element); $event.stopPropagation()">
+                  delete
+                </mat-icon>
+              </ng-container>
+            </div>
+          </td>
+        </ng-container>
+      </ng-container>
+      
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+  <app-paginator [length]="len" *ngIf="len"
+  (paginatorChanged)="onPaginatorChanged($event)">
+  </app-paginator>
+  </article>
+  

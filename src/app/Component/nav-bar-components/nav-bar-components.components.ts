@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ResistorsTableComponent } from '../Elements/Resistors/Resistors-table/resistors-table.component';
-import { TransistorsTableComponent } from '../Elements/Transistors/Transistors-table/transistors-table.component';
+import { ComponentTableComponent } from '../Elements/Transistors/component-table/component-table.component';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { StorageService } from '../../Services/storage.service';
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
@@ -9,14 +11,11 @@ import { TransistorsTableComponent } from '../Elements/Transistors/Transistors-t
   styleUrls: ['./nav-bar-components.components.scss'],
   imports: [
     CommonModule,
-    ResistorsTableComponent,
-    TransistorsTableComponent
+    ComponentTableComponent,
+    MatOptionModule,
+    MatSelectModule
   ]
 })
 export class NavBarComponent {
-    selectedIndex: number = 0; 
-
-    selectItem(index: number) {
-      this.selectedIndex = index;
-    }
+  constructor( private storageService: StorageService){}
 }

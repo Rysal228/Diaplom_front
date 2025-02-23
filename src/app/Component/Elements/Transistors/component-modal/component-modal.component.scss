@@ -1,0 +1,25 @@
+@import '../../../../styles/form-buttons.scss';
+
+form{
+    height: 100%;
+    display: flex;
+    flex-direction: column; 
+}
+
+.input-field{
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 16px;
+}
+
+.input-component{
+    display: flex; 
+    gap: 16px; 
+    margin-bottom: 15px;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}

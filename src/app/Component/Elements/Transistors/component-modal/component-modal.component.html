@@ -1,0 +1,86 @@
+<div mat-dialog-content>
+  <h2>Компонент</h2>
+  <form [formGroup]="componentForm">
+    <div class="grid-container">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Компонент</mat-label>
+        <input matInput type="text" [formControl]="componentListFilter" [matAutocomplete]="table_list_filter">
+        <mat-autocomplete #table_list_filter="matAutocomplete">
+          <mat-option (click)="clearComponentListFilter()">
+            <p>Сбросить фильтр</p>
+          </mat-option>
+          <mat-option
+            (onSelectionChange)="onComponentSelected(component)"
+            *ngFor="let component of componentList"
+            [value]="component?.name">
+            {{ component.name }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Подтип компонента</mat-label>
+        <input matInput type="text" [formControl]="typeOfComponentListFilter" [matAutocomplete]="type_of_component_list_filter">
+        <mat-autocomplete #type_of_component_list_filter="matAutocomplete">
+          <mat-option (click)="clearTypeOfComponentListFilter()">
+            <p>Сбросить фильтр</p>
+          </mat-option>
+          <mat-option
+            (onSelectionChange)="onTypeOfComponentSelected(type)"
+            *ngFor="let type of typeOfComponentList"
+            [value]="type?.name">
+            {{ type.name }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <ng-container formArrayName="columns">
+        <div *ngFor="let columnGroup of columns.controls; let i = index" [formGroupName]="i">
+          <ng-container [ngSwitch]="columnGroup.get('name')?.value">
+            <mat-form-field *ngSwitchCase="'Library Path'" appearance="outline" subscriptSizing="dynamic">
+              <mat-label>{{ columnGroup.get('name')?.value }}</mat-label>
+              <input matInput [formControl]="libraryPathListFilter" [matAutocomplete]="libraryPathAuto">
+              <mat-autocomplete #libraryPathAuto="matAutocomplete">
+                <mat-option
+                  (onSelectionChange)="onLibraryPathSelected(component)"
+                  *ngFor="let option of libraryPathOptions"
+                  [value]="option">
+                  {{ option }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field *ngSwitchCase="'Footprint Path'" appearance="outline" subscriptSizing="dynamic">
+              <mat-label>{{ columnGroup.get('name')?.value }}</mat-label>
+              <input matInput [formControl]="footprintPathListFilter" [matAutocomplete]="footprintPathAuto">
+              <mat-autocomplete #footprintPathAuto="matAutocomplete">
+                <mat-option
+                  (onSelectionChange)="onFootprintPathSelected(component)"
+                  *ngFor="let option of footprintPathOptions"
+                  [value]="option">
+                  {{ option }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field *ngSwitchDefault appearance="outline" subscriptSizing="dynamic">
+              <mat-label>{{ columnGroup.get('name')?.value }}</mat-label>
+              <input matInput formControlName="property" placeholder="Введите значение">
+            </mat-form-field>
+          </ng-container>
+        </div>
+      </ng-container>
+    </div>
+  </form>
+</div>
+
+<div mat-dialog-actions>
+  <div class="action-buttons">
+    <button type="button" mat-button mat-raised-button [mat-dialog-close]="false" color="primary">
+      Отмена
+    </button>
+    <button [disabled]="!componentForm.valid" type="button" mat-button mat-raised-button (click)="onComponentFormClose()" color="primary">
+      Сохранить
+    </button>
+  </div>
+</div>

@@ -1,25 +1,6 @@
-<div class="nav-list-container">
-    <ul class="nav-list">
-        <li (click)="selectItem(0)" class="nav-list-element">Резисторы</li>
-        <li (click)="selectItem(1)" class="nav-list-element">Конденсаторы</li>
-        <li (click)="selectItem(2)" class="nav-list-element">Транзисторы</li>
-        <li (click)="selectItem(3)" class="nav-list-element">ПРИМЕРРР3</li>
-        <li (click)="selectItem(4)" class="nav-list-element">ПРИМЕРРР4</li>
-        <li (click)="selectItem(5)" class="nav-list-element">ПРИМЕРРР5</li>
-        <li (click)="selectItem(6)" class="nav-list-element">ПРИМЕРРР6</li>
-        <li (click)="selectItem(7)" class="nav-list-element">ПРИМЕРРР7</li>
-        <li (click)="selectItem(8)" class="nav-list-element">ПРИМЕРРР8</li>
-    </ul>
-</div>
 <div class="table-container">
-    <ng-container *ngIf="selectedIndex === 0">
-        <app-resistors-table></app-resistors-table>
-    </ng-container>
-    <!-- <ng-container *ngIf="selectedIndex === 1">
-        <app-capacitors-table></app-capacitors-table>
-    </ng-container> -->
-    <ng-container *ngIf="selectedIndex === 2">
-        <app-transistors-table></app-transistors-table>
-    </ng-container>
+    <ng-container>
+        <app-component-table></app-component-table>
+    </ng-container> 
 </div>
 

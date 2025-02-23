@@ -6,6 +6,8 @@ import { CommonModule } from "@angular/common";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { Router } from "@angular/router";
+import { StorageService } from "../../Services/storage.service";
+import { AuthService } from "../../Services/auth.service";
 @Component({
     selector: 'app-header',
     standalone: true,
@@ -28,6 +30,8 @@ import { Router } from "@angular/router";
     
      constructor(
         private router: Router,
+        public storageService: StorageService,
+        public authService : AuthService
      ){}
      ngOnInit(): void {
          
@@ -40,6 +44,6 @@ import { Router } from "@angular/router";
         this.router.navigate(['count'])
     }
     logout(){
-
+      this.storageService.onLogout();
     }
     }

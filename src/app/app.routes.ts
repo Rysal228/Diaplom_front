@@ -1,18 +1,16 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './Component/auth-guard.component.ts/auth-guard.component';
 
 export const routes: Routes = [
-    { path: "", redirectTo: 'auth', pathMatch: 'full'},
-    { path : "auth", loadComponent: () => import ('./Component/auth/auth.component').then(c => c.AuthComponent)},
-    { path: "elementsBar", loadComponent: () => import ('./Component/Elements/elements-table.component').then(c => c.ElementsTableComponent)},
-    { path: "resistors", loadComponent: () => import ('./Component/Elements/Resistors/Resistors-table/resistors-table.component').then(c => c.ResistorsTableComponent)},
-    { path: "transistors", loadComponent: () => import ('./Component/Elements/Transistors/Transistors-table/transistors-table.component').then(c => c.TransistorsTableComponent)},
-    { path: "count", loadComponent: () => import ('./Component/Count/Count-table/count-table.component').then(c => c.CountTableComponent)},
+    { path: "", redirectTo: '/auth', pathMatch: 'full' },
+    { path: "auth", loadComponent: () => import('./Component/auth/auth.component').then(c => c.AuthComponent) },
+    { path: "elementsBar", loadComponent: () => import('./Component/Elements/elements-table.component').then(c => c.ElementsTableComponent), canActivate: [AuthGuard] },
+    { path: "count", loadComponent: () => import('./Component/Count/Count-table/count-table.component').then(c => c.CountTableComponent), canActivate: [AuthGuard] }
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes, {preloadingStrategy: PreloadAllModules})],
+    imports: [RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })],
     exports: [RouterModule]
 })
-export class AppRoutes {
- }
+export class AppRoutes { }
