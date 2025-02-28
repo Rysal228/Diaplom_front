@@ -78,17 +78,36 @@ export class ComponentModalComponent implements OnInit {
   })
 
   ngOnInit(): void {
-    if (this.data) {
-      this.component = { ...this.data };
+    if (this.data.component) {
+      this.component = { ...this.data.component };
       this.componentForm.patchValue({
-        id: this.data.id
+        id: this.data.component.id
       });
-      this.componentUrl = this.component.tableUrl || '';
-      this.componentListFilter.setValue(this.componentUrl);
+      this.componentListFilter.disable();
+      // this.componentUrl = this.component.tableUrl || '';
+      // this.componentListFilter.setValue(this.componentUrl);
+      
     }
-
+    
     this.getColumnList(this.componentUrl);
-
+    this.initializationData();
+    this.getComponents(this.componentFilter.value);
+    
+    this.componentListFilterChange();
+    this.typeOfComponentListFilterChange();
+    this.libraryPathListFilterChange();
+    this.footprintPathListFilterChange();
+    this.cdr.detectChanges();
+  }
+  
+  initializationData(){
+    if (this.data.tableListFilter){
+      this.componentListFilter.setValue(this.data.tableListFilter);
+      this.componentFilter.patchValue({
+          name_filter: this.componentListFilter.value
+      })
+      this.componentUrl= this.componentListFilter.value
+    }
     const columnsArray = this.componentForm.get('columns') as FormArray;
     const libraryPathGroup = columnsArray.controls.find(group => group.get('name')?.value === 'Library Path');
     if (libraryPathGroup) {
@@ -98,16 +117,7 @@ export class ComponentModalComponent implements OnInit {
     if (footprintPathGroup) {
       this.footprintPathListFilter.setValue(footprintPathGroup.get('property')?.value);
     }
-  
-    this.getComponents(this.componentFilter.value);
-    this.componentListFilterChange();
-    this.typeOfComponentListFilterChange();
-    this.libraryPathListFilterChange();
-    this.footprintPathListFilterChange();
-    this.cdr.detectChanges();
   }
-  
-
   getComponents(body?: IComponentsFolderOneRequest){
     this.componentService.getComponentsFolderOne(body).subscribe(result => {
       this.componentList = result.component_list || [];
@@ -235,83 +245,124 @@ export class ComponentModalComponent implements OnInit {
     })
   })
 }
+
   get columns(): FormArray {
     return this.componentForm.get('columns') as FormArray;
   }
 
   getColumnList(tableName?: string) {
-    if (this.data) {
-      const keys = Object.keys(this.data).filter(key => key !== 'id');
-
-      const desiredOrder = ["Part Number", "Library Path", "Library Ref", "Footprint Path", "Footprint Ref"];
-      keys.sort((a, b) => {
+    const requiredColumns = ["Part Number", "Footprint Ref", "Footprint Path", "Library Ref", "Library Path"];
+    if (this.data.component) {
+      
+      // Получаем все ключи, исключая id
+      let keys = Object.keys(this.data.component).filter(key => key !== 'id');
+  
+      // Определяем колонки, которые должны всегда быть последними
+      const specialColumns = ['Library Ref', 'Footprint Ref'];
+  
+      // Разбиваем ключи на две группы
+      const specialKeys = keys.filter(key => specialColumns.includes(key));
+      const otherKeys = keys.filter(key => !specialColumns.includes(key));
+  
+      // Отсортировать обычные колонки по нужному порядку (или алфавитном порядке)
+      // Например, можно задать массив желаемого порядка для остальных колонок:
+      const desiredOrder = ["Library Path", "Footprint Path", "Part Number"];
+      otherKeys.sort((a, b) => {
         const indexA = desiredOrder.indexOf(a);
         const indexB = desiredOrder.indexOf(b);
-        
-        if (indexA === -1 && indexB === -1) {
-          return a.localeCompare(b);
+        if (indexA !== -1 && indexB !== -1) {
+          return indexA - indexB;
         }
-        if (indexA === -1) {
-          return 1;
-        }
-        if (indexB === -1) {
+        if (indexA !== -1) {
           return -1;
         }
-        return indexA - indexB;
+        if (indexB !== -1) {
+          return 1;
+        }
+        return a.localeCompare(b);
       });
-      
+  
+      // Если нужен определённый порядок для специальных колонок, задаём его
+      const specialDesiredOrder = ['Library Ref', 'Footprint Ref'];
+      specialKeys.sort((a, b) => specialDesiredOrder.indexOf(a) - specialDesiredOrder.indexOf(b));
+  
+      // Объединяем обычные и специальные колонки так, чтобы специальные были в конце
+      keys = [...otherKeys, ...specialKeys];
+  
+      // Заполняем FormArray
       const columns = this.componentForm.get('columns') as FormArray;
       columns.clear();
-  
       keys.forEach(key => {
+        const isRequired = requiredColumns.includes(key);
+  
         columns.push(this.fb.group({
-          name: [key],
-          property: [this.data[key] || '']
+          name: [key, isRequired ? Validators.required : []], 
+          property: [this.data.component[key] || '', isRequired ? Validators.required : []] 
         }));
       });
   
       this.cdr.detectChanges();
       return;
     }
-
-
+  
+    // Если this.data.component отсутствует, аналогичным образом обработать результат с сервера:
     this.componentService.getColumns(tableName, { name_filter: "", limit: 10, offset: 0 }).subscribe(result => {
-      const desiredOrder = ["Library Path", "Footprint Path", "Part Number","Library Ref","Footprint Ref"];
+      // Определяем массив специального порядка
+      const specialColumns = ['Library Ref', 'Footprint Ref'];
+      const desiredOrder = ["Library Path", "Footprint Path", "Part Number"]; // для остальных
+  
+      // Фильтруем результат, исключая поле id
       const filteredResult = result.filter((col: any) => col.column !== 'id');
-      filteredResult.sort((a: any, b: any) => {
+  
+      // Разбиваем на две группы
+      const specialResults = filteredResult.filter((col: any) => specialColumns.includes(col.column));
+      const otherResults = filteredResult.filter((col: any) => !specialColumns.includes(col.column));
+  
+      // Сортируем обычные поля
+      otherResults.sort((a: any, b: any) => {
         const indexA = desiredOrder.indexOf(a.column);
         const indexB = desiredOrder.indexOf(b.column);
-  
-        if (indexA === -1 && indexB === -1) {
-          return 0;
-        } else if (indexA === -1) {
-          return 1;
-        } else if (indexB === -1) {
-          return -1;
-        } else {
+        if (indexA !== -1 && indexB !== -1) {
           return indexA - indexB;
         }
+        if (indexA !== -1) {
+          return -1;
+        }
+        if (indexB !== -1) {
+          return 1;
+        }
+        return a.column.localeCompare(b.column);
       });
+  
+      // При необходимости можно отсортировать специальные поля по своему порядку:
+      const specialDesiredOrder = ['Library Ref', 'Footprint Ref'];
+      specialResults.sort((a: any, b: any) => specialDesiredOrder.indexOf(a.column) - specialDesiredOrder.indexOf(b.column));
+  
+      // Объединяем массивы, чтобы специальные поля были в конце
+      const finalColumns = [...otherResults, ...specialResults];
   
       const columns = this.componentForm.get('columns') as FormArray;
       columns.clear();
-  
-      filteredResult.forEach((col: any) => {
+      finalColumns.forEach((col: any) => {
         let defaultValue = '';
         if (col.column === 'Library Ref') {
           defaultValue = 'SCH';
         } else if (col.column === 'Footprint Ref') {
           defaultValue = 'PCB';
         }
+
+        const isRequired = requiredColumns.includes(col.column);
+
         columns.push(this.fb.group({
-          name: [col.column],
-          property: [this.data ? (this.data[col.column] || '') : defaultValue]
+          name: [col.column, isRequired ? Validators.required : []],
+          property: [this.data.component ? (this.data.component[col.column] || '') : defaultValue, isRequired ? Validators.required : []]
         }));
       });
   
       this.cdr.detectChanges();
     });
   }
+  
   
   
   

@@ -200,7 +200,7 @@ export class ComponentTableComponent implements OnInit {
     const dialogRef = this.dialog.open(ComponentModalComponent, {
       data: {
         component: component,
-        tableListFilter: this.tableListFilter.value // Передача значения
+        tableListFilter: this.tableListFilter.value
       },
       disableClose: true,
       width: 'auto',

@@ -22,4 +22,18 @@ form{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
-}
+  }
+  
+  .special-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  
+  .divider {
+    width: 1px;
+    height: 40px;
+    background-color: #ccc;
+  }
+  

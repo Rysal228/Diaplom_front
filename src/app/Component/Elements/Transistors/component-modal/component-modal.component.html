@@ -35,34 +35,39 @@
       </mat-form-field>
 
       <ng-container formArrayName="columns">
-        <div *ngFor="let columnGroup of columns.controls; let i = index" [formGroupName]="i">
+        <div *ngFor="let columnGroup of columns.controls; let i = index"
+        [formGroupName]="i"
+        [ngStyle]="{
+          'grid-column': (columnGroup.get('name')?.value === 'Library Ref' || columnGroup.get('name')?.value === 'Footprint Ref') ? '1 / -1' : 'auto',
+          'border-top': (i > 0 && (columns.controls[i - 1].get('name')?.value !== 'Library Ref' && columns.controls[i - 1].get('name')?.value !== 'Footprint Ref') && 
+                         (columnGroup.get('name')?.value === 'Library Ref' || columnGroup.get('name')?.value === 'Footprint Ref')) ? '2px solid black' : 'none',
+          'padding-top': (columnGroup.get('name')?.value === 'Library Ref' || columnGroup.get('name')?.value === 'Footprint Ref') ? '10px' : '0'
+        }">
           <ng-container [ngSwitch]="columnGroup.get('name')?.value">
             <mat-form-field *ngSwitchCase="'Library Path'" appearance="outline" subscriptSizing="dynamic">
               <mat-label>{{ columnGroup.get('name')?.value }}</mat-label>
               <input matInput [formControl]="libraryPathListFilter" [matAutocomplete]="libraryPathAuto">
               <mat-autocomplete #libraryPathAuto="matAutocomplete">
-                <mat-option
-                  (onSelectionChange)="onLibraryPathSelected(component)"
-                  *ngFor="let option of libraryPathOptions"
-                  [value]="option">
+                <mat-option (onSelectionChange)="onLibraryPathSelected(component)"
+                            *ngFor="let option of libraryPathOptions"
+                            [value]="option">
                   {{ option }}
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
-
+      
             <mat-form-field *ngSwitchCase="'Footprint Path'" appearance="outline" subscriptSizing="dynamic">
               <mat-label>{{ columnGroup.get('name')?.value }}</mat-label>
               <input matInput [formControl]="footprintPathListFilter" [matAutocomplete]="footprintPathAuto">
               <mat-autocomplete #footprintPathAuto="matAutocomplete">
-                <mat-option
-                  (onSelectionChange)="onFootprintPathSelected(component)"
-                  *ngFor="let option of footprintPathOptions"
-                  [value]="option">
+                <mat-option (onSelectionChange)="onFootprintPathSelected(component)"
+                            *ngFor="let option of footprintPathOptions"
+                            [value]="option">
                   {{ option }}
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
-
+      
             <mat-form-field *ngSwitchDefault appearance="outline" subscriptSizing="dynamic">
               <mat-label>{{ columnGroup.get('name')?.value }}</mat-label>
               <input matInput formControlName="property" placeholder="Введите значение">
@@ -70,6 +75,7 @@
           </ng-container>
         </div>
       </ng-container>
+      
     </div>
   </form>
 </div>
