@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { ComponentService } from '../../../../Services/component.service';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,9 @@ import { debounceTime } from 'rxjs';
 import { MatSelectModule } from '@angular/material/select';
 import { IComponentsFolderOne, IComponentsFolderOneRequest } from '../../../../models/components-folder.ts/components-folder-one';
 import { SnackBarComponent } from '../../../snackbar/snackbar.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 @Component({
   selector: 'app-component-modal',
   templateUrl: './component-modal.component.html',
@@ -26,9 +29,11 @@ import { SnackBarComponent } from '../../../snackbar/snackbar.component';
     MatFormFieldModule,
     ReactiveFormsModule,
     MatInputModule,
+    MatIconModule,
     MatOptionModule,
     MatAutocompleteModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTooltipModule
   ]
 })
 export class ComponentModalComponent implements OnInit {
@@ -37,6 +42,7 @@ export class ComponentModalComponent implements OnInit {
     private componentService: ComponentService,
     private dialogRef: MatDialogRef<ComponentModalComponent>,
     private cdr: ChangeDetectorRef,
+    private dialog: MatDialog,
     private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
@@ -51,10 +57,13 @@ export class ComponentModalComponent implements OnInit {
   
   componentUrl: string = '';
   typeOfComponentUrl: string = '';
+  checkComponentPartCopy: boolean = false;
+
   libraryPathOptions: string[] = [];
   footprintPathOptions: string[] = [];
   componentList: IComponentsFolderOne[] = [];
   typeOfComponentList: IComponentsFolderOne[] = [];
+
   componentListFilter = this.fb.nonNullable.control<string>('');
   typeOfComponentListFilter = this.fb.nonNullable.control<string>('');
   libraryPathListFilter = this.fb.nonNullable.control<string>('');
@@ -378,14 +387,54 @@ export class ComponentModalComponent implements OnInit {
   }
 
   
-  onComponentFormClose() {
-    const transformedData = this.transformColumnsToObject(this.componentForm.value.columns);
+  onComponentSaveForm() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: 'Вы точно хотите сохранить эту запись?'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const transformedData = this.transformColumnsToObject(this.componentForm.value.columns);
+        if (this.componentForm.value.id) {
+          transformedData['id'] = this.componentForm.value.id;
+          this.updateDataComponent(transformedData);
+        } else {
+          this.postDataComponent(transformedData);
+        }
+      }
+    });
+  }
+
+  get isCopyDisabled(): boolean {
+
+    if (!this.data.component) {
+      return false;
+    }
+    const columnsArray = this.componentForm.get('columns') as FormArray;
+    const partNumberControl = columnsArray.controls.find(
+      ctrl => ctrl.get('name')?.value === 'Part Number'
+    );
+    if (partNumberControl) {
+      const currentPartNumber = partNumberControl.get('property')?.value;
+      const originalPartNumber = this.data.component['Part Number'];
+
+      return currentPartNumber === originalPartNumber;
+    }
+    return false;
+  }
   
-    if (this.componentForm.value.id) {
-      transformedData['id'] = this.componentForm.value.id;
-      this.updateDataComponent(transformedData);
-    } else {
-      this.postDataComponent(transformedData);
+  onComponentCreateCopyForm(){
+    if (this.data.component) {
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: 'Вы точно хотите создать копию этой записи?'
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.componentForm.patchValue({ id: null });
+          const transformedData = this.transformColumnsToObject(this.componentForm.value.columns);
+          this.postDataComponent(transformedData);
+        }
+      });
     }
   }
 
@@ -396,7 +445,11 @@ export class ComponentModalComponent implements OnInit {
         this.dialogRef.close();
       },
       error: (error) => {
-        this.openSnackBar('Не получилось сохранить компонент. ' + `${error.status}` + ". Попробуйте снова.")
+        let message = `Не получилось сохранить компонент. ${error.status}. Попробуйте снова.`;
+        if (error.error && error.error.detail) {
+          message = error.error.detail;
+        }
+        this.openSnackBar(message);
       }});
   }
 

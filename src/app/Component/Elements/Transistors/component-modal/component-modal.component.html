@@ -68,10 +68,18 @@
               </mat-autocomplete>
             </mat-form-field>
       
-            <mat-form-field *ngSwitchDefault appearance="outline" subscriptSizing="dynamic">
+            <!-- <mat-form-field *ngSwitchDefault appearance="outline" subscriptSizing="dynamic">
               <mat-label>{{ columnGroup.get('name')?.value }}</mat-label>
               <input matInput formControlName="property" placeholder="Введите значение">
+            </mat-form-field> -->
+            <mat-form-field *ngSwitchDefault appearance="outline" subscriptSizing="dynamic">
+              <mat-label>{{ columnGroup.get('name')?.value }}</mat-label>
+              <input matInput 
+                     formControlName="property" 
+                     placeholder="Введите значение"
+                     [disabled]="columnGroup.get('name')?.value === 'MarketURL' || columnGroup.get('name')?.value === 'Price'">
             </mat-form-field>
+            
           </ng-container>
         </div>
       </ng-container>
@@ -82,11 +90,26 @@
 
 <div mat-dialog-actions>
   <div class="action-buttons">
-    <button type="button" mat-button mat-raised-button [mat-dialog-close]="false" color="primary">
-      Отмена
-    </button>
-    <button [disabled]="!componentForm.valid" type="button" mat-button mat-raised-button (click)="onComponentFormClose()" color="primary">
-      Сохранить
-    </button>
-  </div>
+    <div class="button-container">
+      <button type="button" mat-button mat-raised-button [mat-dialog-close]="false" color="primary">
+        Отмена
+      </button>
+      <button *ngIf="componentUrl" 
+      [disabled]="!componentForm.valid" type="button" mat-button mat-raised-button (click)="onComponentSaveForm()" color="primary">
+        Сохранить
+      </button>
+      <button *ngIf="data.component" 
+      [disabled]="!componentForm.valid || isCopyDisabled" 
+      type="button" 
+      mat-button 
+      mat-raised-button 
+      (click)="onComponentCreateCopyForm()" 
+      color="primary">
+        Создать копию 
+      </button>
+      <mat-icon *ngIf="isCopyDisabled"
+                matTooltip="Нельзя создавать копию с тем же Part Number"
+                class="copy-icon"> info
+      </mat-icon>
+    </div>
 </div>

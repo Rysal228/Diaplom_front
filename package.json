@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "concurrently \"cd E:/angular/MyFastApi && uvicorn app.main:app --reload\" \"cd E:/angular/diplomangular/AltiumDesigner && ng serve\"",
+    "start": "concurrently \"cd E:/shit/angular/MyFastApi && uvicorn app.main:app --reload\" \"cd E:/angular/diplomangular/AltiumDesigner && ng serve\"",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -26,8 +26,10 @@
     "bcryptjs": "^2.4.3",
     "crypto-js": "^4.2.0",
     "express": "^4.18.2",
+    "jszip": "^3.10.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.14.3"
   },
   "devDependencies": {

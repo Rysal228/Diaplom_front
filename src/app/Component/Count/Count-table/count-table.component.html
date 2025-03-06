@@ -1,1 +1,33 @@
-hi
+<div class="upload-container"
+     (dragover)="onDragOver($event)"
+     (drop)="onDrop($event)"
+     (click)="fileInput.click()">
+  <input #fileInput type="file" accept=".zip" (change)="onFileSelected($event)" hidden>
+  <p>Перенесите архив или нажмите здесь для выбора файла</p>
+</div>
+
+<!-- Вывод списка файлов из архива (опционально) -->
+<div *ngIf="files.length">
+  <h3>Содержимое архива:</h3>
+  <ul>
+    <li *ngFor="let file of files">{{ file.name }}</li>
+  </ul>
+</div>
+
+<!-- Вывод данных Excel в виде таблицы -->
+<div *ngIf="tableHeaders.length && tableData.length">
+    <h3>Данные Excel:</h3>
+    <table mat-table [dataSource]="tableData" class="mat-elevation-z8">
+  
+      <!-- Создаем контейнер для каждого нужного столбца -->
+      <ng-container *ngFor="let column of tableHeaders" [matColumnDef]="column">
+        <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+        <td mat-cell *matCellDef="let element">{{ element[column] }}</td>
+      </ng-container>
+  
+      <!-- Определяем строки заголовков и данных -->
+      <tr mat-header-row *matHeaderRowDef="tableHeaders"></tr>
+      <tr mat-row *matRowDef="let row; columns: tableHeaders;"></tr>
+    </table>
+  </div>
+  

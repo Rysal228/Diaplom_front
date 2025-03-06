@@ -117,7 +117,7 @@ export class ComponentTableComponent implements OnInit {
   }
   columnListFilterChange(){
     this.columnFilter.valueChanges.pipe(debounceTime(300)).subscribe(() => {
-      this.getColumnList(this.defaultTableName);
+      this.getColumnList(this.tableUrl);
     })
     this.columnListFilter.valueChanges.subscribe(() =>{
       this.columnFilter.patchValue({
@@ -133,11 +133,12 @@ export class ComponentTableComponent implements OnInit {
     console.log('hi')
     this.componentService.getTables(body).subscribe(result => {
       this.tableList = result.table_list;
-      this.getColumnList(this.defaultTableName);
+      // this.getColumnList(this.defaultTableName);
       this.cdr.detectChanges();
     })
   }
     getColumnList(name: any) {
+      console.log('name:',name)
       this.componentService.getColumns(name, {name_filter:"", limit:10, offset:0}).subscribe(result => {
         const columns = this.componentsFilter.get('columns') as FormArray;
         columns.clear();
@@ -269,14 +270,18 @@ export class ComponentTableComponent implements OnInit {
   }
 
   onColumnSelected(column : string){
-    // this.componentsFilter.patchValue({
-    //   property_sort_name: column
-    // })
+    this.componentsFilter.patchValue({
+      property_sort_name: column
+    })
   }
 
   clearColumnListFilter(){
-    // this.columnFilter.patchValue({
-    //   name_filter: ''
-    // })
+    this.columnFilter.patchValue({
+      name_filter: ''
+    })
+    this.componentsFilter.patchValue({
+      property_sort_name: '',
+      property_sort: 0
+    })
   }
 }
