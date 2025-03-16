@@ -130,7 +130,6 @@ export class ComponentTableComponent implements OnInit {
   }
 
   getTableList(body?: any) {
-    console.log('hi')
     this.componentService.getTables(body).subscribe(result => {
       this.tableList = result.table_list;
       // this.getColumnList(this.defaultTableName);
@@ -138,7 +137,6 @@ export class ComponentTableComponent implements OnInit {
     })
   }
     getColumnList(name: any) {
-      console.log('name:',name)
       this.componentService.getColumns(name, {name_filter:"", limit:10, offset:0}).subscribe(result => {
         const columns = this.componentsFilter.get('columns') as FormArray;
         columns.clear();

@@ -17,6 +17,7 @@ import { SnackBarComponent } from '../../../snackbar/snackbar.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogCreateComponent } from '../../../confirm-dialog-create/confirm-dialog-create.component';
 @Component({
   selector: 'app-component-modal',
   templateUrl: './component-modal.component.html',
@@ -306,7 +307,11 @@ export class ComponentModalComponent implements OnInit {
   
         columns.push(this.fb.group({
           name: [key, isRequired ? Validators.required : []], 
-          property: [this.data.component[key] || '', isRequired ? Validators.required : []] 
+          // property: [this.data.component[key] || '', isRequired ? Validators.required : []] 
+          property: [
+            { value: this.data.component[key] || '', disabled: key === 'Price' },
+            isRequired ? Validators.required : []
+          ]
         }));
       });
   
@@ -364,7 +369,12 @@ export class ComponentModalComponent implements OnInit {
 
         columns.push(this.fb.group({
           name: [col.column, isRequired ? Validators.required : []],
-          property: [this.data.component ? (this.data.component[col.column] || '') : defaultValue, isRequired ? Validators.required : []]
+          // property: [this.data.component ? (this.data.component[col.column] || '') : defaultValue, isRequired ? Validators.required : []]
+          property: [{
+            value: this.data.component ? (this.data.component[col.column] || '') : defaultValue,
+            disabled: col.column === 'Price'
+          }, isRequired ? Validators.required : []]
+          
         }));
       });
   
@@ -387,13 +397,35 @@ export class ComponentModalComponent implements OnInit {
   }
 
   
+  // onComponentSaveForm() {
+  //   const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+  //     data: 'Вы точно хотите сохранить эту запись?'
+  //   });
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     if (result) {
+  //       const transformedData = this.transformColumnsToObject(this.componentForm.value.columns);
+  //       if (this.componentForm.value.id) {
+  //         transformedData['id'] = this.componentForm.value.id;
+  //         this.updateDataComponent(transformedData);
+  //       } else {
+  //         this.postDataComponent(transformedData);
+  //       }
+  //     }
+  //   });
+  // }
+
   onComponentSaveForm() {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: 'Вы точно хотите сохранить эту запись?'
+    const dialogRef = this.dialog.open(ConfirmDialogCreateComponent, {
+      data: this.isCopyDisabled
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        const transformedData = this.transformColumnsToObject(this.componentForm.value.columns);
+      console.log('res0:',result)
+      // выбрали перзеаписать
+      if (result === false) {
+        // из-за price disabled
+        // const transformedData = this.transformColumnsToObject(this.componentForm.value.columns);
+        const transformedData = this.transformColumnsToObject(this.componentForm.getRawValue().columns);
+
         if (this.componentForm.value.id) {
           transformedData['id'] = this.componentForm.value.id;
           this.updateDataComponent(transformedData);
@@ -401,9 +433,13 @@ export class ComponentModalComponent implements OnInit {
           this.postDataComponent(transformedData);
         }
       }
+      else if (result === true) {
+        console.log('res',result)
+        // выбрали создать
+        this.onComponentCreateCopyForm();
+      }
     });
   }
-
   get isCopyDisabled(): boolean {
 
     if (!this.data.component) {
@@ -423,19 +459,20 @@ export class ComponentModalComponent implements OnInit {
   }
   
   onComponentCreateCopyForm(){
-    if (this.data.component) {
-      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        data: 'Вы точно хотите создать копию этой записи?'
-      });
+    // if (this.data.component) {
+    //   const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    //     data: 'Вы точно хотите создать копию этой записи?'
+    //   });
 
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
+      // dialogRef.afterClosed().subscribe(result => {
+        // if (result) {
+        console.log('hi')
           this.componentForm.patchValue({ id: null });
           const transformedData = this.transformColumnsToObject(this.componentForm.value.columns);
           this.postDataComponent(transformedData);
-        }
-      });
-    }
+        // }
+      // });
+    // }
   }
 
   postDataComponent(data: Record<string, string>){

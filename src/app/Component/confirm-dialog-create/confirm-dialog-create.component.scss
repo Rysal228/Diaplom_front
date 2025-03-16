@@ -21,3 +21,8 @@ button {
   transition: background-color 0.3s ease;
   margin: 5px;
 }
+
+.button-container {
+    display: flex;
+    align-items: center;
+  }

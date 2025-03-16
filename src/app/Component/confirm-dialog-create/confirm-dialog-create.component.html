@@ -1,0 +1,26 @@
+<div class="logout-dialog-container">
+
+    <div class="dialog-title">Вы хотите перезаписать или сделать копию записи?</div>
+
+<div class="button-container">
+
+  <button class="refuse-button"
+  mat-raised-button
+  color="link"
+  cdkFocusInitial
+  (click)="dialogRef.close(false)">
+  Перезаписать
+  </button>
+  
+  <button class="confirm-button"
+          mat-raised-button
+          [disabled]="isCopyDisabled"
+          (click)="dialogRef.close(true)">
+    Создать копию
+  </button>
+  <mat-icon *ngIf="isCopyDisabled"
+  matTooltip="Нельзя создавать копию с тем же Part Number"
+  class="copy-icon"> info
+    </mat-icon>
+</div>
+</div>

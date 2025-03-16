@@ -98,7 +98,7 @@
       [disabled]="!componentForm.valid" type="button" mat-button mat-raised-button (click)="onComponentSaveForm()" color="primary">
         Сохранить
       </button>
-      <button *ngIf="data.component" 
+      <!-- <button *ngIf="data.component" 
       [disabled]="!componentForm.valid || isCopyDisabled" 
       type="button" 
       mat-button 
@@ -110,6 +110,6 @@
       <mat-icon *ngIf="isCopyDisabled"
                 matTooltip="Нельзя создавать копию с тем же Part Number"
                 class="copy-icon"> info
-      </mat-icon>
+      </mat-icon> -->
     </div>
 </div>
