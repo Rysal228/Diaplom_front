@@ -18,6 +18,21 @@
             add
         </mat-icon>
       </button>
+      Тут эскпорт
+      <button class="button" mat-fab  extended
+      (click)="exportBD()">
+        Скачать
+      <mat-icon>
+          add
+      </mat-icon>
+    </button>
+    Тут импорт
+    <input type="file" (change)="onFileSelected($event)" />
+    <button class="button" mat-fab extended (click)="importBD()">
+      Отправить
+      <mat-icon>add</mat-icon>
+    </button>
+    
     </div>
 </div>
 

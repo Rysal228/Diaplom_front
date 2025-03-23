@@ -21,6 +21,7 @@ import { debounceTime } from "rxjs";
 import { SnackBarComponent } from '../../../snackbar/snackbar.component';
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { IPaginatorObject } from "../../../paginator/paginator-type";
+import { ExportAndImportService } from "../../../../Services/export-and-import-BD.service";
 
 
 @Component({
@@ -56,6 +57,7 @@ export class ComponentTableComponent implements OnInit {
     private fb : FormBuilder,
     private dialog : MatDialog,
     private snackBar: MatSnackBar,
+    private exportAndImportService: ExportAndImportService,
     private storageService: StorageService) {
 
    }
@@ -103,6 +105,50 @@ export class ComponentTableComponent implements OnInit {
     this.componentsFilterChange();
     this.cdr.detectChanges();
   }
+
+  exportBD() {
+    this.exportAndImportService.exportBD().subscribe(blob => {
+      // Создаем временную ссылку
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      // Указываем имя скачиваемого файла
+      a.download = 'database_export.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    });
+  }
+
+  selectedFile: File | null = null;
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+    }
+  }
+  
+  importBD() {
+    if (!this.selectedFile) {
+      console.error("Файл не выбран");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("file", this.selectedFile);
+  
+    this.exportAndImportService.importBD(formData).subscribe(
+      response => {
+        console.log("Файл успешно загружен", response);
+      },
+      error => {
+        console.error("Ошибка загрузки", error);
+      }
+    );
+  }
+  
 
   tableListFilterChange(){
     this.tableFilter.valueChanges.pipe(debounceTime(300)).subscribe(() => {
