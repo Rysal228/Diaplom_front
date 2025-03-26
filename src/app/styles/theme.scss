@@ -1,0 +1,38 @@
+:root {
+  --background-color: #ffffff;
+  --text-color: #000000;
+}
+  
+.dark-theme {
+  --background-color: #464545;
+  --text-color: #ffffff;
+}
+  
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+  
+h1, h2, h3, h4, h5, h6, p, span, a, div{
+  color: var(--text-color);
+}
+::ng-deep mat-label, 
+::ng-deep mat-form-field label{
+  color: var(--text-color) !important;
+}
+.mat-mdc-option {
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
+}
+
+::ng-deep .mat-form-field input {
+  color: var(--text-color) !important;
+}
+::ng-deep input::placeholder {
+  color: var(--text-color) !important;
+  opacity: 1 !important; 
+}
+
+::ng-deep .mat-form-field-placeholder {
+  color: var(--text-color) !important;
+}

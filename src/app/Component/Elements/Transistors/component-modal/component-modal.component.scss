@@ -1,4 +1,4 @@
-@import '../../../../styles/form-buttons.scss';
+@import '../../../../styles/theme.scss';
 
 form{
     height: 100%;
@@ -45,5 +45,10 @@ form{
 .copy-icon {
   margin-left: 8px;
   vertical-align: middle;
+}
+::ng-deep .mat-mdc-dialog-surface{
+  overflow:hidden !important;
+  max-width: none !important;
+  width: auto;
 }
   

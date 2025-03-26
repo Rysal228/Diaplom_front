@@ -29,6 +29,7 @@
               "public/favicon.ico",
               "src/assets"
             ],
+            
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
               "public/styles.scss"
@@ -89,7 +90,7 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
-              "public/styles.scss"
+              "src/styles.scss"
             ],
             "scripts": []
           }

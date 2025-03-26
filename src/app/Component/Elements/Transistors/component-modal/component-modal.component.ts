@@ -466,7 +466,6 @@ export class ComponentModalComponent implements OnInit {
 
       // dialogRef.afterClosed().subscribe(result => {
         // if (result) {
-        console.log('hi')
           this.componentForm.patchValue({ id: null });
           const transformedData = this.transformColumnsToObject(this.componentForm.value.columns);
           this.postDataComponent(transformedData);

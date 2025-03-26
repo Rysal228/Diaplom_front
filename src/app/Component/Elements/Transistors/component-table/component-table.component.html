@@ -1,8 +1,8 @@
 <div class="nav-list-container">
     <div class="nav-list-container">
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
-          <mat-label class="color-white">Таблица компонента</mat-label>
-            <input matInput type="text" class="color-white" [formControl]="tableListFilter" [matAutocomplete]="table_list_filter" placeholder="Введите название таблицы"/>
+          <mat-label style="color: var(--text-color)">Таблица компонента</mat-label>
+            <input matInput type="text" class="color-white" [formControl]="tableListFilter" style="color: var(--text-color)" [matAutocomplete]="table_list_filter" placeholder="Введите название таблицы"/>
             <mat-autocomplete #table_list_filter="matAutocomplete" >
                 <mat-option (click)="clearTableListFilter()"> <p> Сбросить фильтр</p></mat-option>
                     <mat-option (onSelectionChange)="onTableSelected(table)" *ngFor="let table of tableList" [value]="table.name">
@@ -11,35 +11,46 @@
             </mat-autocomplete> 
         </mat-form-field>
 
-        <button class="button" mat-fab  extended
+        <button class="button" mat-raised-button
         (click)="openComponentModal()">
           Добавить 
-        <mat-icon>
+        <mat-icon style="color: var(--text-color)">
             add
         </mat-icon>
       </button>
-      Тут эскпорт
-      <button class="button" mat-fab  extended
+      Экспорт базы данных
+      <button class="button" mat-raised-button
       (click)="exportBD()">
         Скачать
-      <mat-icon>
+      <mat-icon style="color: var(--text-color)">
           add
       </mat-icon>
     </button>
-    Тут импорт
+    Импортировать данные в базу данных
     <input type="file" (change)="onFileSelected($event)" />
-    <button class="button" mat-fab extended (click)="importBD()">
+    <button class="button" mat-raised-button (click)="importBD()">
       Отправить
-      <mat-icon>add</mat-icon>
     </button>
-    
+    <!-- <div class="right-content">
+      <button class="button" mat-raised-button (click)="exportBD()">
+        Экспорт базы данных
+        <mat-icon style="color: var(--text-color)">cloud_download</mat-icon>
+      </button>
+      <div class="import-block">
+        <input type="file" (change)="onFileSelected($event)" />
+        <button class="button" mat-raised-button (click)="importBD()">
+          Импорт базы данных
+          <mat-icon style="color: var(--text-color)">cloud_upload</mat-icon>
+        </button>
+      </div>
+    </div> -->
     </div>
 </div>
 
   <div style="justify-content:flex-end">
   <h2>Сортировка по столбцу:</h2>
   <mat-form-field appearance="outline" subscriptSizing="dynamic">
-    <mat-label class="color-white">Столбец</mat-label>
+    <mat-label style="color: var(--text-color)">Столбец</mat-label>
     <input matInput type="text" [formControl]="columnListFilter" [matAutocomplete]="column_list_filter" class="color-white" placeholder="Введите название столбца"/>
     <mat-autocomplete #column_list_filter="matAutocomplete">
         <mat-option (click)="clearColumnListFilter()"> <p> Сбросить фильтр</p></mat-option>
@@ -98,7 +109,7 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
   </div>
-  <app-paginator [length]="len" *ngIf="len"
+  <app-paginator [length]="len" *ngIf="len" style="color: var(--background-color)"
   (paginatorChanged)="onPaginatorChanged($event)">
   </app-paginator>
   </article>

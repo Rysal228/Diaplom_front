@@ -8,6 +8,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { Router } from "@angular/router";
 import { StorageService } from "../../Services/storage.service";
 import { AuthService } from "../../Services/auth.service";
+import { ThemeService } from "../../Services/theme.service";
 @Component({
     selector: 'app-header',
     standalone: true,
@@ -31,10 +32,14 @@ import { AuthService } from "../../Services/auth.service";
      constructor(
         private router: Router,
         public storageService: StorageService,
-        public authService : AuthService
-     ){}
+        public authService : AuthService,
+        public themeService: ThemeService
+     ){
+      this.isDark = this.themeService.isDarkTheme();
+
+     }
+     isDark: boolean;
      ngOnInit(): void {
-         
      }
 
     componentPage(){
@@ -46,4 +51,10 @@ import { AuthService } from "../../Services/auth.service";
     logout(){
       this.storageService.onLogout();
     }
-    }
+
+   toggleTheme(): void {
+      this.themeService.toggleTheme();
+      this.isDark = this.themeService.isDarkTheme();
+   }
+
+}

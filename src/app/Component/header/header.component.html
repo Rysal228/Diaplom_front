@@ -6,6 +6,9 @@
         <button mat-raised-button (click)="this.countPage()">Закуп</button>
     </div>
             <div class="action-icon">
+                <button (click)="toggleTheme()" style="margin-right: 10px;">
+                    <mat-icon>{{ isDark ? 'dark_mode' : 'light_mode' }}</mat-icon>
+                </button>
                 <mat-icon matTooltip="Выйти из аккаунта" (click)="this.authService.logout()">exit_to_app</mat-icon>
             </div>
     </div>

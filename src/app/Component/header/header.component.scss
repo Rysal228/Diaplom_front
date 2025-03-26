@@ -1,5 +1,5 @@
 .header {
-    height: 45px;
+    height: 55px;
     background-color: rgb(88, 154, 212);
     display: flex;
     justify-content: space-between;
@@ -11,10 +11,15 @@
     display: flex;
     justify-content: flex-start; 
     align-items: center; 
+    margin: 10px;
   
     button {
         width: 100px;
         margin-right: 10px;
+        background-color: #1976d2;
+        .button:hover {
+            background-color: #1565c0;
+          }
     }
 }
 
@@ -26,4 +31,21 @@
 .action-icon {
     display: flex; 
     align-items: center;
+    margin: 10px;
+}
+
+header .action-icon button {
+    background: none; 
+    border: none;          
+    padding: 0;            
+    cursor: pointer;       
+}
+  
+header .action-icon button:focus {
+    outline: none;
+}
+header .action-icon mat-icon {
+    background: none;
+    border: none;
+    // font-size: 24px; 
 }

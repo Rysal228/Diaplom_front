@@ -1,3 +1,6 @@
+@import '../../../../styles/theme.scss';
+
+
 .nav-list-container {
   display: flex;
   gap: 10px;
@@ -11,24 +14,24 @@
 th:first-child {
   position: sticky;
   left: 0;
-  background: #4f4f4f;
+  background: var(--background-color) !important;
   z-index: 2;
 }
 
 td:first-child {
   position: sticky;
   left: 0;
-  background: #474747;
+  background: var(--background-color) !important;
   z-index: 1;
 }
 
 .button {
-  background-color: #1976d2;
-  color: white;
-  font-weight: bold;
+  background-color: #1976d2 !important;
+  // color: white;
+  // font-weight: bold;
 }
 .button:hover {
-  background-color: #1565c0;
+  background-color: #1565c0 !important;
 }
 
 
@@ -42,7 +45,7 @@ div[style*="justify-content:flex-end"] {
 h2 {
   font-size: 16px;
   margin: 0;
-  color: white;
+  // color: white;
 }
 
 table {
@@ -50,9 +53,8 @@ table {
   min-width: 800px;
   border-collapse: collapse;
   border: 2px solid #000;
-  background-color: #464545;
+  background-color: var(--background-color) !important;
   // table-layout: fixed;
-  background-color: #464545;
 }
 
 .table-container {
@@ -68,15 +70,15 @@ th {
 
 td {
   padding: 10px;
-  color: white;
+  // color: white;
   text-align: center;
   border: 1px solid #ddd; 
-  background-color: #474747;
+  background: var(--background-color) !important;
 }
 
 .mat-mdc-header-cell {
-  background: #4f4f4f !important;
-  color: white !important; 
+  background: var(--background-color) !important;
+  color: var(--text-color) !important;
   font-weight: bold;
   border-bottom: 2px solid #818181 !important; 
 }
@@ -90,29 +92,38 @@ td {
 
 
 td:hover {
-  background-color: #f1f1f1;
+  background-color: #f1f1f1 ;
   cursor: pointer;
 }
 
 input{
-  color: white
+  // color: white
 }
 .color-white,
 .color-white::placeholder {
-  color: white !important;
+  color: var(--text-color) !important;
 }
 
 .mat-mdc-row:hover .mat-mdc-cell {
   cursor: pointer;
-  background-color: #80caff;
+  background-color: #80caff !important;
 }
 
 .mat-mdc-input-element {
-  color: white !important; 
+  color: var(--text-color) !important; 
 }
 
 .input-field::placeholder {
-  color: rgb(222, 221, 221) !important; 
+  color: var(--text-color) !important;
+}
+::ng-deep .mat-mdc-option {
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
+}
+
+.mat-mdc-autocomplete-panel {
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
 }
 
 .mat-column{
@@ -126,3 +137,34 @@ input{
   justify-content: center; 
   gap: 10px; 
 }
+
+.main-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* выравнивание по верху */
+  gap: 20px;
+  margin: 20px;
+}
+
+/* Левая часть занимает основное пространство */
+.left-content {
+  flex: 1;
+}
+
+/* Правая часть фиксированной ширины или по содержимому */
+.right-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 15px;
+}
+
+/* Можно дополнительно стилизовать блок импорта */
+.import-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+

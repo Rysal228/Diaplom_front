@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from "@angular/core";
 import { ComponentService } from "../../../../Services/component.service";
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -29,6 +29,7 @@ selector: 'app-component-table',
 standalone: true,
 templateUrl: './component-table.component.html',
 styleUrls: ['./component-table.component.scss'],
+encapsulation: ViewEncapsulation.None,
 imports: [
   MatIconModule,
   MatTooltipModule,
@@ -247,8 +248,7 @@ export class ComponentTableComponent implements OnInit {
         component: component,
         tableListFilter: this.tableListFilter.value
       },
-      disableClose: true,
-      width: 'auto',
+      disableClose: true
     });
     dialogRef.afterClosed().subscribe(() => {
       this.getComponentList(this.componentsFilter.value);

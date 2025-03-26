@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from "@angular/core";
 import JSZip from 'jszip';
 import * as XLSX from 'xlsx';
 import { CommonModule } from "@angular/common";
@@ -13,6 +13,7 @@ import { MatTableModule } from '@angular/material/table';
   standalone: true,
   templateUrl: './count-table.component.html',
   styleUrls: ['./count-table.component.scss'],
+  encapsulation: ViewEncapsulation.None,
   imports: [
     MatIconModule,
     MatTooltipModule,

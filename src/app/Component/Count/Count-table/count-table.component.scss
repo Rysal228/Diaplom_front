@@ -1,3 +1,4 @@
+@import '../../../styles/theme.scss';
 .upload-container {
     border: 2px dashed #007bff;
     border-radius: 8px;
@@ -27,20 +28,20 @@
   th:first-child {
     position: sticky;
     left: 0;
-    background: #4f4f4f;
+    background: var(--background-color) !important;
     z-index: 2;
   }
   
   td:first-child {
     position: sticky;
     left: 0;
-    background: #474747;
+    background: var(--background-color) !important;
     z-index: 1;
   }
   
   .button {
     background-color: #1976d2;
-    color: white;
+    // color: white;
     font-weight: bold;
   }
   .button:hover {
@@ -58,7 +59,7 @@
   h2 {
     font-size: 16px;
     margin: 0;
-    color: white;
+    // color: white;
   }
   
   table {
@@ -66,9 +67,8 @@
     min-width: 800px;
     border-collapse: collapse;
     border: 2px solid #000;
-    background-color: #464545;
+    background-color: var(--background-color) !important;
     // table-layout: fixed;
-    background-color: #464545;
   }
   
   .table-container {
@@ -84,15 +84,15 @@
   
   td {
     padding: 10px;
-    color: white;
+    // color: white;
     text-align: center;
     border: 1px solid #ddd; 
-    background-color: #474747;
+    background: var(--background-color) !important;
   }
   
   .mat-mdc-header-cell {
-    background: #4f4f4f !important;
-    color: white !important; 
+    background: var(--background-color) !important;
+    color: var(--text-color) !important;
     font-weight: bold;
     border-bottom: 2px solid #818181 !important; 
   }
@@ -106,26 +106,26 @@
   
   
   td:hover {
-    background-color: #f1f1f1;
+    background-color: #f1f1f1 !important;
     cursor: pointer;
   }
   
 input{
-    color: white
+    // color: white
 }
 
 .color-white,
 .color-white::placeholder {
-    color: white !important;
+    // color: white !important;
 }
   
 .mat-mdc-row:hover .mat-mdc-cell {
     cursor: pointer;
-    background-color: #80caff;
+    background-color: #80caff !important;
 }
   
 .mat-mdc-input-element {
-    color: white !important; 
+    // color: white !important; 
 }
   
 .input-field::placeholder {
@@ -145,5 +145,5 @@ input{
 }
 
 p,h1,h2,h3{
-  color: white
+  // color: white
 }
