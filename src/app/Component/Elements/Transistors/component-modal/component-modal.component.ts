@@ -18,6 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ConfirmDialogComponent } from '../../../confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogCreateComponent } from '../../../confirm-dialog-create/confirm-dialog-create.component';
+import { StorageService } from '../../../../Services/storage.service';
 @Component({
   selector: 'app-component-modal',
   templateUrl: './component-modal.component.html',
@@ -44,6 +45,7 @@ export class ComponentModalComponent implements OnInit {
     private dialogRef: MatDialogRef<ComponentModalComponent>,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
+    private storageService: StorageService,
     private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
@@ -52,7 +54,10 @@ export class ComponentModalComponent implements OnInit {
       columns: this.fb.array([]),
     });
   }
-  
+
+  get isRole(): string {
+    return this.storageService.getUserRole();
+  }
   component!: any;
   componentForm: FormGroup;
   

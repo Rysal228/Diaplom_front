@@ -3,6 +3,7 @@
 .logout-dialog-container {
   padding: 20px;
   text-align: center;
+  background: var(--background-color) !important
 }
 
 .dialog-title {
@@ -25,4 +26,5 @@ button {
 .button-container {
     display: flex;
     align-items: center;
-  }
+    justify-content: center;
+}

@@ -1,6 +1,7 @@
-<div class="nav-list-container">
-    <div class="nav-list-container">
-        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+<div>
+  <div style="display: flex; justify-content: space-between; padding-top: 5px;">
+    <div class="">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="border-field" floatLabel="always">
           <mat-label style="color: var(--text-color)">Таблица компонента</mat-label>
             <input matInput type="text" class="color-white" [formControl]="tableListFilter" style="color: var(--text-color)" [matAutocomplete]="table_list_filter" placeholder="Введите название таблицы"/>
             <mat-autocomplete #table_list_filter="matAutocomplete" >
@@ -11,66 +12,60 @@
             </mat-autocomplete> 
         </mat-form-field>
 
-        <button class="button" mat-raised-button
+        <button *ngIf="isRole === 'admin' || isRole === 'moderator'"
+        class="button" mat-raised-button style="margin-left: 10px"
         (click)="openComponentModal()">
           Добавить 
         <mat-icon style="color: var(--text-color)">
             add
         </mat-icon>
       </button>
-      Экспорт базы данных
-      <button class="button" mat-raised-button
-      (click)="exportBD()">
-        Скачать
-      <mat-icon style="color: var(--text-color)">
-          add
-      </mat-icon>
-    </button>
-    Импортировать данные в базу данных
-    <input type="file" (change)="onFileSelected($event)" />
-    <button class="button" mat-raised-button (click)="importBD()">
-      Отправить
-    </button>
-    <!-- <div class="right-content">
-      <button class="button" mat-raised-button (click)="exportBD()">
-        Экспорт базы данных
-        <mat-icon style="color: var(--text-color)">cloud_download</mat-icon>
-      </button>
-      <div class="import-block">
-        <input type="file" (change)="onFileSelected($event)" />
-        <button class="button" mat-raised-button (click)="importBD()">
-          Импорт базы данных
-          <mat-icon style="color: var(--text-color)">cloud_upload</mat-icon>
+
+      <div>
+        <h2>Сортировка по столбцу:</h2>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="border-field" floatLabel="always">
+          <mat-label style="color: var(--text-color)">Столбец</mat-label>
+          <input matInput type="text" [formControl]="columnListFilter" [matAutocomplete]="column_list_filter" class="color-white" placeholder="Введите название столбца"/>
+          <mat-autocomplete #column_list_filter="matAutocomplete">
+              <mat-option (click)="clearColumnListFilter()"> <p> Сбросить фильтр</p></mat-option>
+                  <mat-option (onSelectionChange)="onColumnSelected(column)" *ngFor="let column of displayedColumns" [value]="column">
+                      {{column}}
+                  </mat-option>
+          </mat-autocomplete>
+          
+      </mat-form-field>
+      <h2>Сортировка по:</h2>
+      <div [formGroup]="componentsFilter">
+          <mat-form-field appearance="outline" class="border-field">
+              <mat-select formControlName="property_sort" style="color: white">
+                  <mat-option *ngFor="let sort of sortingValue" [value]="sort.value" >
+                      {{ sort.name }}
+                  </mat-option>
+              </mat-select>
+          </mat-form-field>
+      </div>
+        </div>
+    </div>
+    <div class="right-content import-block" *ngIf="isRole === 'admin'">
+      <div>
+        <span>Экспорт базы данных</span>
+        <button class="button" mat-raised-button (click)="exportBD()">
+          Скачать
+          <mat-icon style="color: var(--text-color)">cloud_download</mat-icon>
         </button>
       </div>
-    </div> -->
+  
+      <div>
+        <span>Импорт данных в базу</span>
+        <input #fileInput type="file" (change)="onFileSelected($event)" />
+        <button class="button" mat-raised-button (click)="importBD()">
+          Отправить
+        </button>
+      </div>
     </div>
+  </div>
 </div>
 
-  <div style="justify-content:flex-end">
-  <h2>Сортировка по столбцу:</h2>
-  <mat-form-field appearance="outline" subscriptSizing="dynamic">
-    <mat-label style="color: var(--text-color)">Столбец</mat-label>
-    <input matInput type="text" [formControl]="columnListFilter" [matAutocomplete]="column_list_filter" class="color-white" placeholder="Введите название столбца"/>
-    <mat-autocomplete #column_list_filter="matAutocomplete">
-        <mat-option (click)="clearColumnListFilter()"> <p> Сбросить фильтр</p></mat-option>
-            <mat-option (onSelectionChange)="onColumnSelected(column)" *ngFor="let column of displayedColumns" [value]="column">
-                {{column}}
-            </mat-option>
-    </mat-autocomplete>
-    
-</mat-form-field>
-<h2>Сортировка по:</h2>
-<div [formGroup]="componentsFilter">
-    <mat-form-field appearance="outline">
-        <mat-select formControlName="property_sort" style="color: white">
-            <mat-option *ngFor="let sort of sortingValue" [value]="sort.value" >
-                {{ sort.name }}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-</div>
-  </div>
   <article>
     <div class="table-container">
     <table mat-table [dataSource]="componentList">
@@ -78,7 +73,7 @@
         <ng-container matColumnDef="{{ column }}">
           <th mat-header-cell *matHeaderCellDef>
             {{ column }}
-            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="border-field">
               <input
                 class="grid-last input-field"
                 matInput
@@ -92,7 +87,7 @@
             <div class="cell-content">
               <span>{{ element[column] }}</span>
               <ng-container *ngIf="column === 'Part Number'">
-                <mat-icon 
+                <mat-icon *ngIf="isRole === 'admin'"
                   matTooltip="Кликните, чтобы удалить запись"
                   matTooltipShowDelay="100" 
                   (click)="openComponentDeleteModal(element); $event.stopPropagation()">

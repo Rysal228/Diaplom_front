@@ -23,6 +23,15 @@
     }
 }
 
+.name{
+    display: flex; 
+    align-items: center;
+}
+
+h1 {
+    margin: 0;
+}
+
 .login{
     display: flex;
     justify-content: space-between;
@@ -48,4 +57,20 @@ header .action-icon mat-icon {
     background: none;
     border: none;
     // font-size: 24px; 
+}
+
+::ng-deep .mat-mdc-menu-panel,
+::ng-deep .mat-menu-panel {
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
+}
+
+::ng-deep .mat-mdc-menu-item,
+::ng-deep .mat-menu-item {
+  color: var(--text-color) !important;
+}
+
+::ng-deep .mat-mdc-menu-item .mat-icon,
+::ng-deep .mat-menu-item .mat-icon {
+  color: var(--text-color) !important;
 }

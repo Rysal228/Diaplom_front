@@ -107,6 +107,10 @@ export class ComponentTableComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+  get isRole(): string {
+    return this.storageService.getUserRole();
+  }
+
   exportBD() {
     this.exportAndImportService.exportBD().subscribe(blob => {
       // Создаем временную ссылку
@@ -123,6 +127,25 @@ export class ComponentTableComponent implements OnInit {
   }
 
   selectedFile: File | null = null;
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+  
+    if (event.dataTransfer?.files.length) {
+      this.selectedFile = event.dataTransfer.files[0];
+    }
+  }
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;

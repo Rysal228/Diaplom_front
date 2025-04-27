@@ -6,7 +6,18 @@ export const routes: Routes = [
     { path: "", redirectTo: '/auth', pathMatch: 'full' },
     { path: "auth", loadComponent: () => import('./Component/auth/auth.component').then(c => c.AuthComponent) },
     { path: "elementsBar", loadComponent: () => import('./Component/Elements/elements-table.component').then(c => c.ElementsTableComponent), canActivate: [AuthGuard] },
-    { path: "count", loadComponent: () => import('./Component/Count/Count-table/count-table.component').then(c => c.CountTableComponent), canActivate: [AuthGuard] }
+    {
+        path: 'count',
+        loadComponent: () => import('./Component/Count/Count-table/count-table.component').then(c => c.CountTableComponent),
+        canActivate: [AuthGuard],
+        data: { roles: ['admin', 'moderator', 'buyer'] }
+    },
+    {
+        path: 'count/:archiveName',
+        loadComponent: () => import('./Component/Count/Count-table/count-table.component').then(m => m.CountTableComponent),
+        canActivate: [AuthGuard],
+        data: { roles: ['admin', 'moderator', 'buyer'] }
+      }
 ];
 
 @NgModule({

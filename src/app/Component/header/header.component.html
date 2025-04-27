@@ -1,15 +1,42 @@
 <header class="header">
-    <h3> Менеджер Altium Designer</h3>
+    <div class="name">
+        <h1> Менеджер библиотек Altium Designer</h1>
+    </div>
     <div *ngIf ="storageService.onLogin()" class="login">
     <div class="action-button">
+        <!-- <button mat-raised-button (click)="this.openRegistrationModal()" *ngIf="isRole === 'admin'">Регистрация</button> -->
         <button mat-raised-button (click)="this.componentPage()">Компоненты</button>
-        <button mat-raised-button (click)="this.countPage()">Закуп</button>
+        <button mat-raised-button (click)="countPage()" *ngIf="isRole === 'admin' || isRole === 'buyer' || isRole === 'moderator'">
+            Закуп
+          </button>          
     </div>
-            <div class="action-icon">
-                <button (click)="toggleTheme()" style="margin-right: 10px;">
-                    <mat-icon>{{ isDark ? 'dark_mode' : 'light_mode' }}</mat-icon>
+        <div class="action-icon">
+            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Открыть меню">
+                <mat-icon>settings</mat-icon>
+              </button>
+              
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="toggleTheme()">
+                  <mat-icon>{{ isDark ? 'dark_mode' : 'light_mode' }}</mat-icon>
+                  <span>Переключить тему</span>
                 </button>
-                <mat-icon matTooltip="Выйти из аккаунта" (click)="this.authService.logout()">exit_to_app</mat-icon>
-            </div>
+                <button mat-menu-item (click)="this.openRegistrationModal()" *ngIf="isRole === 'admin'">
+                  <mat-icon>how_to_reg</mat-icon>
+                  <span>Создать пользователя</span>
+                </button>
+                <button mat-menu-item *ngIf="isRole === 'admin'" (click)="this.openUsersModal()">
+                  <mat-icon>group</mat-icon>
+                  <span>Список пользователей</span>
+                </button>
+                <button mat-menu-item (click)="authService.logout()">
+                  <mat-icon>exit_to_app</mat-icon>
+                  <span>Выйти</span>
+                </button>
+              </mat-menu>
+                <!-- <button mat-icon-button (click)="toggleTheme()">
+                    <mat-icon>{{ isDark ? 'dark_mode' : 'light_mode' }}</mat-icon>
+                  </button> -->
+            <!-- <mat-icon matTooltip="Выйти из аккаунта" (click)="this.authService.logout()">exit_to_app</mat-icon> -->
+        </div>
     </div>
 </header>

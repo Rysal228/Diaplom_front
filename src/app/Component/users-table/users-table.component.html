@@ -1,0 +1,34 @@
+<div class="container">
+    <h2 class="title">Список пользователей</h2>
+    <div class="table-container">
+        <table mat-table [dataSource]="userList" class="table">          
+        <ng-container matColumnDef="username">
+            <th mat-header-cell *matHeaderCellDef> Имя аккаунта </th>
+            <div class="cell-content">
+                <td mat-cell *matCellDef="let element">  
+                    <div class="cell-content">
+                        {{element.username}} 
+                    </div>
+                </td>
+            </div>
+        </ng-container>
+        <ng-container matColumnDef="role">
+            <th mat-header-cell *matHeaderCellDef> Роль </th>
+                <td mat-cell *matCellDef="let element"> 
+                    <div class="cell-content">
+                        {{element.role}} 
+                    </div>
+            </td>
+        </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+      <app-paginator [length]="len" *ngIf="len" style="color: var(--background-color)"
+      (paginatorChanged)="onPaginatorChanged($event)">
+      </app-paginator>
+
+      <div class="button-group">
+        <button mat-raised-button color="primary" type="button" (click)="onExit()">Выйти</button>
+      </div>
+</div>

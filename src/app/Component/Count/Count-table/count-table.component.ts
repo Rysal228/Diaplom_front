@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from "@angular/core";
+import { ChangeDetectorRef, Component, HostListener, OnInit, ViewEncapsulation } from "@angular/core";
 import JSZip from 'jszip';
 import * as XLSX from 'xlsx';
 import { CommonModule } from "@angular/common";
@@ -7,6 +7,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
+import { StorageService } from "../../../Services/storage.service";
+import { MatButtonModule } from "@angular/material/button";
+import { ActivatedRoute } from "@angular/router";
+
 
 @Component({
   selector: 'app-count-table',
@@ -19,11 +23,48 @@ import { MatTableModule } from '@angular/material/table';
     MatTooltipModule,
     MatAutocompleteModule,
     MatTabsModule,
+    MatButtonModule,
     MatTableModule,
     CommonModule
   ]
 })
 export class CountTableComponent implements OnInit {
+    
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private storageService: StorageService,
+    private route: ActivatedRoute
+  )
+   {
+    
+   }
+
+  archiveName: string | null = null;
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const name = params.get('archiveName');
+      if (name) {
+        this.archiveName = name;
+        this.loadArchiveFromStorage(name);
+      }
+    });
+  }
+  isFloating = false;
+  items = Array(100).fill(0);
+
+  // для плавающей кнопки сохранить
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    const scrollY = window.scrollY || window.pageYOffset;
+    this.isFloating = scrollY > 300; 
+  }
+  // для удаления архивов из localstorage
+  @HostListener('window:beforeunload', ['$event'])
+  clearArchiveOnClose(event: Event) {
+    if (this.archiveName) {
+      localStorage.removeItem(`zip_${this.archiveName}`);
+    }
+  }
   // Список файлов из архива
   files: Array<{ name: string, content: string }> = [];
   // Данные для таблицы из Excel
@@ -39,19 +80,36 @@ export class CountTableComponent implements OnInit {
   // Сохраняем исходный архив, чтобы потом можно было его модифицировать
   originalZip: JSZip | null = null;
   originalFileName: string = '';
-  constructor(private cdr: ChangeDetectorRef) {}
 
-  ngOnInit(): void {}
-
-  async onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files || !input.files.length) {
-      return;
-    }
+  // async onFileSelected(event: Event) {
+  //   const input = event.target as HTMLInputElement;
+  //   if (!input.files || !input.files.length) {
+  //     return;
+  //   }
+  //   const file = input.files[0];
+  //   this.processFile(file);
+  // }
+  async onFileSelected(evt: Event) {
+    const input = evt.target as HTMLInputElement;
+    if (!input.files?.length) return;
     const file = input.files[0];
-    this.processFile(file);
-  }
+    const baseName = file.name.replace(/\.[^/.]+$/, ''); // без расширения
 
+    // 1) Считываем в ArrayBuffer
+    const buf = await file.arrayBuffer();
+
+    // 2) Конвертим в Base64
+    const b64 = this.arrayBufferToBase64(buf);
+
+    // 3) Сохраняем в localStorage
+    localStorage.setItem(`zip_${baseName}`, b64);
+
+    // 4) Открываем новую вкладку
+    window.open(`/count/${baseName}`, '_blank');
+  }
+  get isRole(): string {
+    return this.storageService.getUserRole();
+  }
   async onDrop(event: DragEvent) {
     event.preventDefault();
     if (!event.dataTransfer?.files || !event.dataTransfer.files.length) {
@@ -60,7 +118,84 @@ export class CountTableComponent implements OnInit {
     const file = event.dataTransfer.files[0];
     this.processFile(file);
   }
+  private arrayBufferToBase64(buf: ArrayBuffer) {
+    let bin = '';
+    const bytes = new Uint8Array(buf);
+    for (let i=0; i<bytes.byteLength; i++) {
+      bin += String.fromCharCode(bytes[i]);
+    }
+    return btoa(bin);
+  }
+  
+  private async loadArchiveFromStorage(name: string) {
+    // Восстанавливаем имя архива
+    this.originalFileName = `${name}.zip`;
+  
+    const b64 = localStorage.getItem(`zip_${name}`);
+    if (!b64) {
+      console.error(`Нет данных для архива ${name}`);
+      return;
+    }
+    const buf = this.base64ToArrayBuffer(b64);
+    await this.processArrayBuffer(buf, name);
+    this.cdr.detectChanges();
+  }
 
+  private async processArrayBuffer(arrayBuffer: ArrayBuffer, fileName: string) {
+    try {
+      this.originalZip = await JSZip.loadAsync(arrayBuffer);
+
+      // … ваш существующий код чтения .xlsx и группировки …
+      // например:
+      let excelFound = false;
+      for (const fn in this.originalZip.files) {
+        const entry = this.originalZip.files[fn];
+        if (!entry.dir && !excelFound && fn.toLowerCase().endsWith('.xlsx')) {
+          const data = await entry.async('arraybuffer');
+          const wb = XLSX.read(data, { type: 'array' });
+          const ws = wb.Sheets[wb.SheetNames[0]];
+          const requiredColumns = ['Part Number','Value','Comment','Description','Quantity','MarketURL','Price'];
+          const raw: any[][] = XLSX.utils.sheet_to_json(ws, { header: 1 });
+          const headers = raw[0] as string[];
+          this.tableHeaders = requiredColumns;
+          this.tableData = raw.slice(1).map(row => {
+            const obj: any = {};
+            requiredColumns.forEach(col => {
+              const idx = headers.indexOf(col);
+              obj[col] = idx >= 0 ? row[idx] : null;
+            });
+            return obj;
+          });
+          excelFound = true;
+        }
+      }
+      // группировка и подсчёты (как у вас)
+      this.groupedTableData = this.tableData.reduce((acc, r) => {
+        const key = r['MarketURL']||'Без MarketURL';
+        (acc[key] = acc[key]||[]).push(r);
+        return acc;
+      }, {} as any);
+      Object.keys(this.groupedTableData).forEach(m => {
+        this.groupTotals[m] = this.groupedTableData[m]
+          .reduce((s, r) => s + Number(r.Price||0)*Number(r.Quantity||0), 0);
+      });
+      this.overallTotal = Object.values(this.groupTotals)
+        .reduce((s, v) => s+v, 0);
+    } catch(err) {
+      console.error('Ошибка распаковки', err);
+    }
+  }
+
+  /** Base64 → ArrayBuffer */
+  private base64ToArrayBuffer(b64: string) {
+    const bin = atob(b64);
+    const buf = new ArrayBuffer(bin.length);
+    const bytes = new Uint8Array(buf);
+    for (let i=0; i<bin.length; i++) {
+      bytes[i] = bin.charCodeAt(i);
+    }
+    return buf;
+  }
   onDragOver(event: DragEvent) {
     event.preventDefault();
   }
@@ -102,7 +237,6 @@ export class CountTableComponent implements OnInit {
               // Берем первый лист
               const sheetName = workbook.SheetNames[0];
               const worksheet = workbook.Sheets[sheetName];
-              // Указываем необходимые колонки (Price переименовали из Price1)
               const requiredColumns = ['Part Number','Value','Comment','Description','Quantity', 'MarketURL', 'Price'];
               // Чтение данных листа в виде массива массивов
               const jsonData: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });

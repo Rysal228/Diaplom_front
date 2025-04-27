@@ -9,6 +9,11 @@ import { Router } from "@angular/router";
 import { StorageService } from "../../Services/storage.service";
 import { AuthService } from "../../Services/auth.service";
 import { ThemeService } from "../../Services/theme.service";
+import { RegistrationComponent } from "../registration/registration.component";
+import { MatDialog } from "@angular/material/dialog";
+import {MatMenuModule} from '@angular/material/menu';
+import { UsersTableComponent } from "../users-table/users-table.component";
+
 @Component({
     selector: 'app-header',
     standalone: true,
@@ -20,41 +25,65 @@ import { ThemeService } from "../../Services/theme.service";
        MatTooltipModule,
        MatDialogModule,
        MatButtonModule,
-    //   MatAutocompleteModule,
        MatTabsModule,
-    //   MatTableModule
+       RegistrationComponent,
+       MatMenuModule
     ],
     providers: []
     })
     
     export class HeaderComponent implements OnInit {
     
-     constructor(
-        private router: Router,
-        public storageService: StorageService,
-        public authService : AuthService,
-        public themeService: ThemeService
-     ){
-      this.isDark = this.themeService.isDarkTheme();
+   constructor(
+      private router: Router,
+      public storageService: StorageService,
+      public authService : AuthService,
+      public themeService: ThemeService,
+      private dialog: MatDialog
+   ){
+   this.isDark = this.themeService.isDarkTheme();
+   }
 
-     }
-     isDark: boolean;
-     ngOnInit(): void {
-     }
+   isDark: boolean;
 
-    componentPage(){
-        this.router.navigate(['elementsBar'])
-    }
-    countPage(){
-        this.router.navigate(['count'])
-    }
-    logout(){
-      this.storageService.onLogout();
-    }
+
+   ngOnInit(): void {
+
+   }
+
+   get isRole(): string {
+      return this.storageService.getUserRole();
+   }
+
+   componentPage(){
+      this.router.navigate(['elementsBar'])
+   }
+
+   countPage(){
+      this.router.navigate(['count'])
+   }
+
+   logout(){
+   this.storageService.onLogout();
+   }
 
    toggleTheme(): void {
       this.themeService.toggleTheme();
       this.isDark = this.themeService.isDarkTheme();
    }
 
+   openRegistrationModal(){
+      const dialogRef = this.dialog.open(RegistrationComponent,{
+         width: "auto",
+         height: "auto",
+         disableClose: true
+      })
+   }
+   openUsersModal(){
+      const dialogRef = this.dialog.open(UsersTableComponent, {
+         width: "auto",
+         height: "auto",
+         disableClose: true
+      })
+   }
 }

@@ -6,11 +6,52 @@ form{
     flex-direction: column; 
 }
 
-.input-field{
-    display: flex; 
-    flex-wrap: wrap; 
-    gap: 16px;
+.modal{
+  background: var(--background-color) !important
 }
+
+.modal-buttons{
+  padding-left: 24px;
+  background: var(--background-color) !important
+}
+
+// .input-field{
+//     display: flex; 
+//     flex-wrap: wrap; 
+//     gap: 16px;
+//     border: 1px solid var(--text-color);
+//     background: var(--background-color) !important;
+// }
+
+.border-field {
+  --mdc-outlined-text-field-outline-color: var(--text-color) !important;
+  --mdc-outlined-text-field-hover-outline-color: var(--text-color) !important;
+  --mdc-outlined-text-field-focus-outline-color: var(--text-color) !important;
+}
+
+
+.mat-mdc-input-element {
+  color: var(--text-color) !important; 
+}
+
+.input-field::placeholder {
+  color: var(--text-color) !important;
+}
+
+::ng-deep .mat-mdc-option {
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
+}
+
+.mat-mdc-autocomplete-panel {
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
+}
+
+// .color-white,
+// .color-white::placeholder {
+//   color: var(--text-color) !important;
+// }
 
 .input-component{
     display: flex; 
@@ -31,11 +72,11 @@ form{
   margin-top: 16px;
 }
 
-.divider {
-  width: 1px;
-  height: 40px;
-  background-color: #ccc;
-}
+// .divider {
+//   width: 1px;
+//   height: 40px;
+//   background-color: #ccc;
+// }
 
 .button-container {
   display: flex;

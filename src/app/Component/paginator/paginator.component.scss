@@ -20,3 +20,7 @@
 ::ng-deep .mat-mdc-select-value {
     color: var(--text-color) !important;
 }
+
+::ng-deep .mat-mdc-select .mat-mdc-select-arrow {
+    color: var(--text-color);
+}

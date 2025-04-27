@@ -25,4 +25,9 @@ export class AuthService {
         window.localStorage.removeItem('altium-username');
         this.router.navigate(['/auth']);
     }
+
+    refreshToken(): Observable<any> {
+        const refresh_token = this.storageService.getRefreshToken();
+        return this.http.post<any>(this.apiUrl + 'refresh', { refresh_token });
+    }
 }

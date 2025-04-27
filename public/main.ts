@@ -8,6 +8,8 @@ import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { JwtInterceptorProviders } from '../src/app/Component/interceptor/custom.interceptor';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { CustomPaginatorIntl } from '../src/app/Component/paginator/custom-paginator-intl.component';
 
 bootstrapApplication(AppComponent, {
     providers: [
@@ -16,10 +18,10 @@ bootstrapApplication(AppComponent, {
             provide: MAT_DATE_LOCALE,
             useValue: 'ru-RU'
         },
-        // {
-        //     provide: MatPaginatorIntl,
-        //     useClass: MyCustomPaginatorIntl
-        // },
+        {
+            provide: MatPaginatorIntl,
+            useClass: CustomPaginatorIntl
+        },
         {
             provide: MAT_DIALOG_DEFAULT_OPTIONS,
             useValue: { panelClass: 'mat-dialog-override' }

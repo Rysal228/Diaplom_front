@@ -1,9 +1,9 @@
 
-<div mat-dialog-content>
+<div mat-dialog-content class="modal">
   <h2>Компонент</h2>
   <form [formGroup]="componentForm">
     <div class="grid-container">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="border-field">
         <mat-label>Компонент</mat-label>
         <input matInput type="text" [formControl]="componentListFilter" [matAutocomplete]="table_list_filter">
         <mat-autocomplete #table_list_filter="matAutocomplete">
@@ -19,7 +19,7 @@
         </mat-autocomplete>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="border-field">
         <mat-label>Подтип компонента</mat-label>
         <input matInput type="text" [formControl]="typeOfComponentListFilter" [matAutocomplete]="type_of_component_list_filter">
         <mat-autocomplete #type_of_component_list_filter="matAutocomplete">
@@ -45,7 +45,7 @@
           'padding-top': (columnGroup.get('name')?.value === 'Library Ref' || columnGroup.get('name')?.value === 'Footprint Ref') ? '10px' : '0'
         }">
           <ng-container [ngSwitch]="columnGroup.get('name')?.value">
-            <mat-form-field *ngSwitchCase="'Library Path'" appearance="outline" subscriptSizing="dynamic">
+            <mat-form-field *ngSwitchCase="'Library Path'" appearance="outline" subscriptSizing="dynamic" class="border-field">
               <mat-label>{{ columnGroup.get('name')?.value }}</mat-label>
               <input matInput [formControl]="libraryPathListFilter" [matAutocomplete]="libraryPathAuto">
               <mat-autocomplete #libraryPathAuto="matAutocomplete">
@@ -57,7 +57,7 @@
               </mat-autocomplete>
             </mat-form-field>
       
-            <mat-form-field *ngSwitchCase="'Footprint Path'" appearance="outline" subscriptSizing="dynamic">
+            <mat-form-field *ngSwitchCase="'Footprint Path'" appearance="outline" subscriptSizing="dynamic" class="border-field">
               <mat-label>{{ columnGroup.get('name')?.value }}</mat-label>
               <input matInput [formControl]="footprintPathListFilter" [matAutocomplete]="footprintPathAuto">
               <mat-autocomplete #footprintPathAuto="matAutocomplete">
@@ -73,7 +73,7 @@
               <mat-label>{{ columnGroup.get('name')?.value }}</mat-label>
               <input matInput formControlName="property" placeholder="Введите значение">
             </mat-form-field> -->
-            <mat-form-field *ngSwitchDefault appearance="outline" subscriptSizing="dynamic">
+            <mat-form-field *ngSwitchDefault appearance="outline" subscriptSizing="dynamic" floatLabel="always" class="border-field">
               <mat-label>{{ columnGroup.get('name')?.value }}</mat-label>
               <input matInput 
                      formControlName="property" 
@@ -89,17 +89,17 @@
   </form>
 </div>
 
-<div mat-dialog-actions>
+<div mat-dialog-actions class="modal-buttons">
   <div class="action-buttons">
     <div class="button-container">
       <button type="button" mat-button mat-raised-button [mat-dialog-close]="false" color="primary">
         Отмена
       </button>
-      <button *ngIf="componentUrl" 
+      <button *ngIf="(componentUrl) && (isRole === 'admin' || isRole === 'moderator')" 
       [disabled]="!componentForm.valid" type="button" mat-button mat-raised-button (click)="onComponentSaveForm()" color="primary">
         Сохранить
       </button>
-      <!-- <button *ngIf="data.component" 
+      <button *ngIf="data.component" 
       [disabled]="!componentForm.valid || isCopyDisabled" 
       type="button" 
       mat-button 
@@ -111,6 +111,6 @@
       <mat-icon *ngIf="isCopyDisabled"
                 matTooltip="Нельзя создавать копию с тем же Part Number"
                 class="copy-icon"> info
-      </mat-icon> -->
+      </mat-icon>
     </div>
 </div>
