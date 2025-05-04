@@ -145,18 +145,37 @@ export class ComponentModalComponent implements OnInit {
   }
 
   getTypeOfComponent(body: IComponentsFolderOneRequest){
-    this.componentService.getComponentsFolderTwo(this.componentUrl, body).subscribe( result => {
+    this.componentService.getComponentsFolderTwo(this.componentUrl, body).subscribe({ next: result => {
       this.typeOfComponentList = result.component_list || [];
       this.cdr.detectChanges();
       if (this.typeOfComponentUrl){
         this.getPcbAndSchList();
       }
-    })
+    }, 
+    error: err => {
+      if (err.status == 404) {
+        this.openSnackBar(`Ошибка при загрузке подтипов компонета. Данного компонента нет в БД`)
+      }
+      else {
+        this.openSnackBar(`Ошибка при загрузке подтипов компонента. ${err.status}`)
+      }
+    }})
   }
   getPcbAndSchList(body?: any){
-    this.componentService.getComponentsFolderThree(this.componentUrl,this.typeOfComponentUrl,this.pcb_and_sch_filters.value).subscribe( result => {
+    this.componentService.getComponentsFolderThree(this.componentUrl,this.typeOfComponentUrl,this.pcb_and_sch_filters.value).subscribe({ next: result => {
       this.libraryPathOptions = result.SCH || []; 
       this.footprintPathOptions = result.PCB || []; 
+    },
+    error : err => {
+      const detail = err.error?.detail;
+      if (err.status === 404 && detail === "Component not found") {
+        this.openSnackBar("Ошибка при загрузке Sch и Pcb: компонент не найден в БД");
+      } else if (err.status === 404 && detail === "Type not found") {
+        this.openSnackBar("Ошибка при загрузке Sch и Pcb: тип компонента не найден");
+      } else {
+        this.openSnackBar(`Неизвестная ошибка: ${err.status}`);
+      }
+    }
     })
   }
   
@@ -214,9 +233,9 @@ export class ComponentModalComponent implements OnInit {
   }
 
   libraryPathListFilterChange() {
-    this.pcb_and_sch_filters.valueChanges.pipe(debounceTime(300)).subscribe(() => {
-      this.getPcbAndSchList(this.pcb_and_sch_filters.value);
-    });
+    // this.pcb_and_sch_filters.valueChanges.pipe(debounceTime(300)).subscribe(() => {
+    //   this.getPcbAndSchList(this.pcb_and_sch_filters.value);
+    // });
   
     this.libraryPathListFilter.valueChanges.subscribe(value => {
       this.pcb_and_sch_filters.patchValue({
@@ -391,6 +410,15 @@ export class ComponentModalComponent implements OnInit {
   
   
   updateDataComponent(data: Record<string, string>){
+
+    if (!data['Footprint Path'].startsWith('./PCB/')) {
+      data['Footprint Path'] = './PCB/' + data['Footprint Path'];
+    }
+    
+    if (!data['Library Path'].startsWith('./SCH/')) {
+      data['Library Path'] = './SCH/' + data['Library Path'];
+    }
+
     this.componentService.updateComponent(data, this.componentUrl).subscribe({
       next: () => {
          this.openSnackBar('Компонент обновлен');
@@ -401,49 +429,33 @@ export class ComponentModalComponent implements OnInit {
       }});
   }
 
-  
-  // onComponentSaveForm() {
-  //   const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-  //     data: 'Вы точно хотите сохранить эту запись?'
-  //   });
-  //   dialogRef.afterClosed().subscribe(result => {
-  //     if (result) {
-  //       const transformedData = this.transformColumnsToObject(this.componentForm.value.columns);
-  //       if (this.componentForm.value.id) {
-  //         transformedData['id'] = this.componentForm.value.id;
-  //         this.updateDataComponent(transformedData);
-  //       } else {
-  //         this.postDataComponent(transformedData);
-  //       }
-  //     }
-  //   });
-  // }
-
   onComponentSaveForm() {
-    const dialogRef = this.dialog.open(ConfirmDialogCreateComponent, {
-      data: this.isCopyDisabled
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('res0:',result)
-      // выбрали перзеаписать
-      if (result === false) {
-        // из-за price disabled
-        // const transformedData = this.transformColumnsToObject(this.componentForm.value.columns);
-        const transformedData = this.transformColumnsToObject(this.componentForm.getRawValue().columns);
+    const transformedData = this.transformColumnsToObject(this.componentForm.getRawValue().columns);
 
-        if (this.componentForm.value.id) {
-          transformedData['id'] = this.componentForm.value.id;
-          this.updateDataComponent(transformedData);
-        } else {
-          this.postDataComponent(transformedData);
+    if(this.data?.component?.id){
+      const dialogRef = this.dialog.open(ConfirmDialogCreateComponent, {
+        data: this.isCopyDisabled
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result === false) {
+          // из-за price disabled
+          // const transformedData = this.transformColumnsToObject(this.componentForm.value.columns);
+          
+          if (this.componentForm.value.id) {
+            transformedData['id'] = this.componentForm.value.id;
+            this.updateDataComponent(transformedData);
+          } else {
+            this.postDataComponent(transformedData);
+          }
         }
-      }
-      else if (result === true) {
-        console.log('res',result)
-        // выбрали создать
-        this.onComponentCreateCopyForm();
-      }
-    });
+        else if (result === true) {
+          this.onComponentCreateCopyForm();
+        }
+      });
+    }
+    else{
+      this.postDataComponent(transformedData);
+    }
   }
   get isCopyDisabled(): boolean {
 
@@ -464,22 +476,21 @@ export class ComponentModalComponent implements OnInit {
   }
   
   onComponentCreateCopyForm(){
-    // if (this.data.component) {
-    //   const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-    //     data: 'Вы точно хотите создать копию этой записи?'
-    //   });
-
-      // dialogRef.afterClosed().subscribe(result => {
-        // if (result) {
-          this.componentForm.patchValue({ id: null });
-          const transformedData = this.transformColumnsToObject(this.componentForm.value.columns);
-          this.postDataComponent(transformedData);
-        // }
-      // });
-    // }
+    this.componentForm.patchValue({ id: null });
+    const transformedData = this.transformColumnsToObject(this.componentForm.value.columns);
+    this.postDataComponent(transformedData);
   }
 
   postDataComponent(data: Record<string, string>){
+
+    if (!data['Footprint Path'].startsWith('./PCB/')) {
+      data['Footprint Path'] = './PCB/' + data['Footprint Path'];
+    }
+    
+    if (!data['Library Path'].startsWith('./SCH/')) {
+      data['Library Path'] = './SCH/' + data['Library Path'];
+    }
+
     this.componentService.createComponent(data, this.componentUrl).subscribe({
       next: () => {
         this.openSnackBar('Компонент создан');

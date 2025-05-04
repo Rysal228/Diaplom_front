@@ -1,7 +1,22 @@
+@import '../../styles/theme.scss';
+
 :host {
     display: flex;
-  }
+}
 
-.example-pizza-party {
-    color: rgb(249, 249, 249);
+.data {
+  color: var(--text-color) !important; 
+}
+
+.mat-snack-bar-container {
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
+}
+
+.mat-button {
+  color: var(--text-color) !important;
+}
+
+::ng-deep .mat-mdc-snack-bar-container .mat-mdc-snackbar-surface {
+  background-color: var(--background-color) !important;
 }

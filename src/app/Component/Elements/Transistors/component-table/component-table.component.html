@@ -56,7 +56,18 @@
       </div>
   
       <div>
-        <span>Импорт данных в базу</span>
+        <span class="import-title">Импорт данных в БД
+        <mat-icon
+        matTooltip="Загрузите JSON-файл в формате, соответствующем вашей модели данных. 
+        Убедитесь, что названия таблиц БД соответствуют названию 'таблиц' в файле, а также корректность полей!
+        В ином случае таблицы и поля в ней будут не заполнены!"
+        matTooltipPosition="above"
+        aria-label="Подсказка по импорту"
+        class="info-icon"
+        >
+          help_outline
+        </mat-icon>
+        </span>
         <input #fileInput type="file" (change)="onFileSelected($event)" />
         <button class="button" mat-raised-button (click)="importBD()">
           Отправить

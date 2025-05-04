@@ -19,4 +19,10 @@ export class ExportAndImportService {
   importBD(file: FormData): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}API/v1/upload/`, file);
   }
+  
+  uploadOriginalArchive(file: Blob, filename: string) {
+    const form = new FormData();
+    form.append('file', file, filename);
+    return this.http.post<{ message: string }>(`${this.apiUrl}API/v1/upload-archive`, form);
+  }
 }

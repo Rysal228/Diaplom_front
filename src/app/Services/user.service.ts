@@ -24,8 +24,8 @@ export class UserService {
         return this.http.post<any>(this.apiUrl + 'users', body)
     }
 
-    updateUserById(body?: number): Observable<any>{
-        return this.http.put<any>(this.apiUrl + 'users', body)
+    updateUserById(body?: any): Observable<any>{
+        return this.http.put<any>(this.apiUrl + `users/${body?.id}`, body)
         
     }
 }

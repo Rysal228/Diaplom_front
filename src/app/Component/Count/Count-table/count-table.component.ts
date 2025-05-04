@@ -10,6 +10,10 @@ import { MatTableModule } from '@angular/material/table';
 import { StorageService } from "../../../Services/storage.service";
 import { MatButtonModule } from "@angular/material/button";
 import { ActivatedRoute } from "@angular/router";
+import { ExportAndImportService } from "../../../Services/export-and-import-BD.service";
+import { SnackBarComponent } from "../../snackbar/snackbar.component";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { ArchiveTableComponent } from "../Archives-table/archives-table.component";
 
 
 @Component({
@@ -25,7 +29,8 @@ import { ActivatedRoute } from "@angular/router";
     MatTabsModule,
     MatButtonModule,
     MatTableModule,
-    CommonModule
+    CommonModule,
+    ArchiveTableComponent
   ]
 })
 export class CountTableComponent implements OnInit {
@@ -33,7 +38,9 @@ export class CountTableComponent implements OnInit {
   constructor(
     private cdr: ChangeDetectorRef,
     private storageService: StorageService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private exportAndImportService: ExportAndImportService,
+    private snackBar: MatSnackBar
   )
    {
     
@@ -80,6 +87,7 @@ export class CountTableComponent implements OnInit {
   // Сохраняем исходный архив, чтобы потом можно было его модифицировать
   originalZip: JSZip | null = null;
   originalFileName: string = '';
+  originalFileBlob: Blob | null = null;
 
   // async onFileSelected(event: Event) {
   //   const input = event.target as HTMLInputElement;
@@ -89,35 +97,77 @@ export class CountTableComponent implements OnInit {
   //   const file = input.files[0];
   //   this.processFile(file);
   // }
+  // async onFileSelected(evt: Event) {
+  //   const input = evt.target as HTMLInputElement;
+  //   if (!input.files?.length) return;
+  //   const file = input.files[0];
+  //   this.originalFileName = file.name;
+  //   this.originalFileBlob = file;
+
+  //   // для сейва прикрепленного архива
+  //   if (this.originalFileBlob && this.originalFileName) {
+  //     this.exportAndImportService.uploadOriginalArchive(this.originalFileBlob, this.originalFileName)
+  //       .subscribe({
+  //         next: res => { this.openSnackBar(`Исходный архив отправлен на сервер`)},
+  //         error: err => {this.openSnackBar(`Ошибка при отправке архива на сервер:', ${err.err.detail}`)}
+  //       });
+  //   }
+
+  //   const baseName = file.name.replace(/\.[^/.]+$/, '');
+
+  //   const buf = await file.arrayBuffer();
+
+  //   const b64 = this.arrayBufferToBase64(buf);
+
+  //   localStorage.setItem(`zip_${baseName}`, b64);
+
+  //   window.open(`/count/${baseName}`, '_blank');
+  // }
   async onFileSelected(evt: Event) {
     const input = evt.target as HTMLInputElement;
     if (!input.files?.length) return;
-    const file = input.files[0];
-    const baseName = file.name.replace(/\.[^/.]+$/, ''); // без расширения
-
-    // 1) Считываем в ArrayBuffer
-    const buf = await file.arrayBuffer();
-
-    // 2) Конвертим в Base64
-    const b64 = this.arrayBufferToBase64(buf);
-
-    // 3) Сохраняем в localStorage
-    localStorage.setItem(`zip_${baseName}`, b64);
-
-    // 4) Открываем новую вкладку
-    window.open(`/count/${baseName}`, '_blank');
+    await this.handleArchiveFile(input.files[0]);
   }
   get isRole(): string {
     return this.storageService.getUserRole();
   }
+  // async onDrop(event: DragEvent) {
+  //   event.preventDefault();
+  //   if (!event.dataTransfer?.files || !event.dataTransfer.files.length) {
+  //     return;
+  //   }
+  //   const file = event.dataTransfer.files[0];
+  //   this.processFile(file);
+  // }
+  
   async onDrop(event: DragEvent) {
     event.preventDefault();
-    if (!event.dataTransfer?.files || !event.dataTransfer.files.length) {
-      return;
-    }
-    const file = event.dataTransfer.files[0];
-    this.processFile(file);
+    if (!event.dataTransfer?.files?.length) return;
+    await this.handleArchiveFile(event.dataTransfer.files[0]);
   }
+
+  private async handleArchiveFile(file: File) {
+    // 1) Сохраняем имя/блоб
+    this.originalFileName = file.name;
+    this.originalFileBlob = file;
+  
+    // 2) Отправляем на бэкенд
+    this.exportAndImportService.uploadOriginalArchive(file, file.name)
+      .subscribe({
+        next: () => this.openSnackBar('Исходный архив отправлен на сервер'),
+        error: err => this.openSnackBar(`Ошибка при отправке архива: ${err.error?.detail || err.message}`)
+      });
+  
+    // 3) Кладём в localStorage
+    const buf = await file.arrayBuffer();
+    const baseName = file.name.replace(/\.[^/.]+$/, '');
+    localStorage.setItem(`zip_${baseName}`, this.arrayBufferToBase64(buf));
+  
+    // 4) Открываем новую вкладку
+    window.open(`/count/${baseName}`, '_blank');
+  }
+
+
   private arrayBufferToBase64(buf: ArrayBuffer) {
     let bin = '';
     const bytes = new Uint8Array(buf);
@@ -128,7 +178,7 @@ export class CountTableComponent implements OnInit {
   }
   
   private async loadArchiveFromStorage(name: string) {
-    // Восстанавливаем имя архива
+
     this.originalFileName = `${name}.zip`;
   
     const b64 = localStorage.getItem(`zip_${name}`);
@@ -145,8 +195,6 @@ export class CountTableComponent implements OnInit {
     try {
       this.originalZip = await JSZip.loadAsync(arrayBuffer);
 
-      // … ваш существующий код чтения .xlsx и группировки …
-      // например:
       let excelFound = false;
       for (const fn in this.originalZip.files) {
         const entry = this.originalZip.files[fn];
@@ -169,7 +217,7 @@ export class CountTableComponent implements OnInit {
           excelFound = true;
         }
       }
-      // группировка и подсчёты (как у вас)
+
       this.groupedTableData = this.tableData.reduce((acc, r) => {
         const key = r['MarketURL']||'Без MarketURL';
         (acc[key] = acc[key]||[]).push(r);
@@ -186,7 +234,6 @@ export class CountTableComponent implements OnInit {
     }
   }
 
-  /** Base64 → ArrayBuffer */
   private base64ToArrayBuffer(b64: string) {
     const bin = atob(b64);
     const buf = new ArrayBuffer(bin.length);
@@ -429,6 +476,13 @@ export class CountTableComponent implements OnInit {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     });
+
   }
   
+    openSnackBar(text: string) {
+        this.snackBar.openFromComponent(SnackBarComponent, {
+          data: text,
+          duration: 5000
+        });
+    } 
 }  

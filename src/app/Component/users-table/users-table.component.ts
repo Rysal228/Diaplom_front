@@ -18,6 +18,7 @@ import { SnackBarComponent } from "../snackbar/snackbar.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { IPaginatorObject } from "../paginator/paginator-type";
 import { UserService } from "../../Services/user.service";
+import { RegistrationComponent } from "../registration/registration.component";
 
 
 @Component({
@@ -70,6 +71,7 @@ export class UsersTableComponent implements OnInit {
   }
 
   displayedColumns = ['username','role'];
+  roles = ["Пользователь","Администратор","Модератор","Менеджер по закупкам"];
   userList: any[] = [];
   len!: number;
 
@@ -97,6 +99,26 @@ export class UsersTableComponent implements OnInit {
       limit: paginator.limit,
       offset: paginator.offset
     });
+  }
+
+  roleNames: { [key: string]: string } = {
+    user: 'Пользователь',
+    admin: 'Администратор',
+    moderator: 'Модератор',
+    buyer: 'Менеджер по закупкам'
+  };
+
+  openRegistrationModal(data: any){
+    const dialogRef = this.dialog.open(RegistrationComponent,{
+        width: "auto",
+        height: "auto",
+        data: data,
+        disableClose: true
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      this.getUserList(this.usersFilter.value);
+    }
+    )
   }
 
   onExit(){

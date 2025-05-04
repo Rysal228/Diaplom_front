@@ -156,20 +156,32 @@ export class ComponentTableComponent implements OnInit {
   
   importBD() {
     if (!this.selectedFile) {
-      console.error("Файл не выбран");
+      this.openSnackBar("Файл не выбран")
       return;
     }
   
     const formData = new FormData();
     formData.append("file", this.selectedFile);
   
-    this.exportAndImportService.importBD(formData).subscribe(
-      response => {
-        console.log("Файл успешно загружен", response);
+    this.exportAndImportService.importBD(formData).subscribe({
+      next : response => {
+        this.openSnackBar("Файл успешно загружен")
       },
-      error => {
-        console.error("Ошибка загрузки", error);
+      error : error => {
+        if (error.status == 403){
+          this.openSnackBar(`Ошибка загрузки, ${error.error.detail}. Недостаточно прав`)
+        }
+        else if (error.status == 400){
+          this.openSnackBar(`Ошибка загрузки, ${error.error.detail}. Ошибка при разборе JSON`)
+        }
+        else if (error.status == 500) {
+          this.openSnackBar(`Ошибка загрузки, ${error.error.detail}`);
+        }
+        else {
+        this.openSnackBar(`Ошибка загрузки, ${error.error.detail}`)
+        }
       }
+    }
     );
   }
   
@@ -200,14 +212,16 @@ export class ComponentTableComponent implements OnInit {
   }
 
   getTableList(body?: any) {
-    this.componentService.getTables(body).subscribe(result => {
+    this.componentService.getTables(body).subscribe({ next :result => {
       this.tableList = result.table_list;
-      // this.getColumnList(this.defaultTableName);
       this.cdr.detectChanges();
-    })
+    },
+    error: err =>{
+      this.openSnackBar(`Ошибка при получении списка таблиц. ${err.error.detail}`)
+    }})
   }
     getColumnList(name: any) {
-      this.componentService.getColumns(name, {name_filter:"", limit:10, offset:0}).subscribe(result => {
+      this.componentService.getColumns(name, {name_filter:"", limit:10, offset:0}).subscribe({ next: result => {
         const columns = this.componentsFilter.get('columns') as FormArray;
         columns.clear();
         
@@ -226,7 +240,9 @@ export class ComponentTableComponent implements OnInit {
 
         
         this.getComponentList(this.componentsFilter.value);
-      });
+      }, error : err => {
+        this.openSnackBar(`Ошибка при получении списка колонок таблицы. ${err.error.detail}`)
+      }});
     }
 
     getColumnFilterControl(column: string): FormControl {
@@ -258,13 +274,8 @@ export class ComponentTableComponent implements OnInit {
     this.componentsFilter.valueChanges.pipe(debounceTime(300)).subscribe(() => {
       this.getComponentList(this.componentsFilter);
     })
-    // const { controls } = this.componentsFilter;
-    // Object.keys(controls).slice(2).forEach(controlName => {
-    //   controls.[controlName].valueChanges.subscribe(() => {
-    //     this.paginator.resetOffset();
-    //   })
-    // })
   }
+
   openComponentModal(component?: any) {
     const dialogRef = this.dialog.open(ComponentModalComponent, {
       data: {
@@ -312,7 +323,7 @@ export class ComponentTableComponent implements OnInit {
   openSnackBar(text: string) {
     this.snackBar.openFromComponent(SnackBarComponent, {
       data: text,
-      duration: 3000,
+      duration: 5000,
     });
   }
   onTableSelected(table: { name: string }){

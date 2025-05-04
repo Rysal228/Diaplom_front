@@ -1,5 +1,5 @@
 <div class="buy-window">
-  
+
   <div class="upload-container" *ngIf="!archiveName"
       (dragover)="onDragOver($event)"
       (drop)="onDrop($event)"
@@ -19,14 +19,11 @@
     </button>
   </div>
   
-  <!-- Вывод таблиц, сгруппированных по MarketURL -->
   <div *ngIf="tableHeaders.length && tableData.length">
     <div *ngFor="let group of groupedTableData | keyvalue">
       <h3>MarketURL: {{ group.key }}</h3>
-      <!-- Отображение общей суммы для магазина -->
       <p><strong>Общая сумма Price:</strong> {{ groupTotals[group.key] }}</p>
       <table mat-table [dataSource]="group.value" class="mat-elevation-z8">
-        <!-- Динамическое создание колонок по tableHeaders -->
         <ng-container *ngFor="let column of tableHeaders" [matColumnDef]="column">
           <th mat-header-cell *matHeaderCellDef><span>{{ column }}</span></th>
           <td mat-cell *matCellDef="let element"> 
@@ -36,19 +33,16 @@
           </td>
         </ng-container>
         
-        <!-- Ряды заголовков и данных -->
         <tr mat-header-row *matHeaderRowDef="tableHeaders"></tr>
         <tr mat-row *matRowDef="let row; columns: tableHeaders;"></tr>
       </table>
       <br>
     </div>
 
-    <!-- Итоговая сводная таблица -->
     <div class="summary">
       <h3>Сводная информация по магазинам</h3>
       <p><strong>Общая сумма по всем магазинам: </strong>{{ overallTotal }}</p>
       <table mat-table [dataSource]="groupedTableData | keyvalue" class="mat-elevation-z8">
-        <!-- Колонка для адреса магазина -->
         <ng-container matColumnDef="market">
           <th mat-header-cell *matHeaderCellDef> <span>MarketURL </span></th>
           <td mat-cell *matCellDef="let item"> 
@@ -57,7 +51,6 @@
             </div>
           </td>
         </ng-container>
-        <!-- Колонка для суммы -->
         <ng-container matColumnDef="total">
           <th mat-header-cell *matHeaderCellDef><span> Сумма Price</span></th>
           <td mat-cell *matCellDef="let item"> 
@@ -69,7 +62,8 @@
         <tr mat-header-row *matHeaderRowDef="['market', 'total']"></tr>
         <tr mat-row *matRowDef="let row; columns: ['market', 'total'];"></tr>
       </table>
-      <!-- Общая сумма по всем магазинам -->
     </div>
   </div>
+  <app-archives-table *ngIf="!archiveName"></app-archives-table>
 </div>
+

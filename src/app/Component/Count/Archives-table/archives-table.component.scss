@@ -1,0 +1,73 @@
+@import '../../../styles/theme.scss';
+
+table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border: 2px solid var(--text-color);
+    background-color: var(--background-color) !important;
+}
+
+table.table {
+    box-shadow: none !important;
+    border-bottom: 2px solid var(--text-color) !important;
+}
+  
+.table-container {
+    width: 100%;          
+    overflow-x: auto;     
+}
+
+th {
+    padding: 10px !important;
+    text-align: center;
+    border: 1px solid var(--text-color);
+}
+
+td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid var(--text-color);
+    background: var(--background-color) !important;
+}
+  
+.mat-mdc-header-cell {
+    color: var(--text-color) !important;
+    font-weight: bold;
+    border-bottom: 2px solid #818181 !important; 
+    text-align: center !important;
+}
+    
+.mat-mdc-cell {
+    border-bottom-color: var(--text-color) !important;
+}
+  
+.mat-mdc-select-panel {
+    background-color: var(--background-color) !important;
+    color: var(--text-color) !important;
+}
+  
+.mat-mdc-autocomplete-panel {
+    background-color: var(--background-color) !important;
+    color: var(--text-color) !important;
+}
+  
+.cell-content {
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+    gap: 10px; 
+}
+
+mat-icon{
+    cursor: pointer;
+}
+
+.mat-column-action{
+    width: 15% !important;
+    word-break: break-word; 
+}
+.mat-column-upload_date{
+    width: 20% !important;
+    word-break: break-word;  
+}

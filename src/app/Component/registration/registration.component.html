@@ -1,6 +1,7 @@
 <div class="registration-container">
     <form [formGroup]="registrationForm">
-      <h3 class="registration-title">Регистрация</h3>
+      <h3 class="registration-title" *ngIf="!this?.data">Регистрация</h3>
+      <h3 class="registration-title"  *ngIf="this?.data">Пользователь:</h3>
   
       <div class="form-field">
         <mat-form-field appearance="outline" class="border-field" floatLabel="always">
@@ -38,14 +39,14 @@
         <mat-form-field appearance="outline" class="border-field">
           <mat-label>Роль</mat-label>
           <mat-select formControlName="role">
-            <mat-option *ngFor="let role of roles" [value]="role"> {{ role }} </mat-option>
+            <mat-option *ngFor="let role of roles" [value]="role.value"> {{ role.viewValue }} </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
   
       <div class="button-group">
         <button mat-raised-button color="primary" type="button" (click)="onExit()">Выйти</button>
-        <button mat-raised-button color="primary" type="submit" (click)="onCreateAccount()" [disabled]="registrationForm.invalid">Создать</button>
+        <button mat-raised-button color="primary" type="submit" (click)="onCreateAccount()" [disabled]="registrationForm.invalid">Сохранить</button>
       </div>
     </form>
   </div>

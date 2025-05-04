@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from '../environment/environment';
 import { IComponentsResponse} from '../models/components/components-response';
 import { StorageService } from './storage.service';
@@ -11,8 +11,7 @@ import { IComponentFolderThreeResponse, IComponentsFolderOneRequest, IComponents
 export class ComponentService {
   private apiUrl : string;
   name: string = '';
-  constructor(private http: HttpClient,
-    private storageService: StorageService
+  constructor(private http: HttpClient
   ) { 
     this.apiUrl = environment.apiUrl + '/';
   }
@@ -35,11 +34,26 @@ export class ComponentService {
   }
 
   getColumns(name?: any, body?: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}API/v1/tables/${name}/list`,body);
+    if (name){
+      return this.http.post<any>(`${this.apiUrl}API/v1/tables/${name}/list`,body);
+    } 
+    else {
+      return of([])
+    } 
   }
 
   getComponentList(url?: any, body?: any): Observable<IComponentsResponse> {
+    if (url){
     return this.http.post<IComponentsResponse>(`${this.apiUrl}API/v1/component/${url}/list/filtered`, body);
+    }
+    else{
+      return of({
+        total_count: 0,
+        len: 0,
+        offset: 0,
+        component_list: []
+      });
+    }
   }
 
   getComponentsFolderOne(body?: IComponentsFolderOneRequest): Observable<IComponentsFolderOneResponse>{
